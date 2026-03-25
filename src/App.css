@@ -1,3 +1,35 @@
+/* ── View switcher ── */
+.view-switcher {
+  display: flex;
+  gap: 0;
+  margin: 24px 0 0;
+  border-bottom: 2px solid #e0e0e4;
+}
+
+.view-btn {
+  padding: 12px 24px;
+  border: none;
+  background: none;
+  font-size: 15px;
+  font-weight: 500;
+  font-family: inherit;
+  color: #888;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.view-btn:hover {
+  color: #555;
+}
+
+.view-btn.active {
+  color: #3d5a80;
+  font-weight: 600;
+  border-bottom-color: #3d5a80;
+}
+
 .scenario-bar {
   padding: 24px 0 20px;
   margin-bottom: 20px;

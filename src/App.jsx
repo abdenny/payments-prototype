@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import SignupEditor from './components/SignupEditor'
+import CreateSignupFlow from './components/CreateSignupFlow'
 import './App.css'
 
 const CONFIGS = {
@@ -72,8 +73,9 @@ const CONFIGS = {
 }
 
 export default function App() {
-  const [complexity, setComplexity] = useState('simple') // 'off' | 'simple' | 'advanced'
-  const [chargeType, setChargeType] = useState('spot')   // 'spot' | 'household'
+  const [view, setView] = useState('edit') // 'edit' | 'create'
+  const [complexity, setComplexity] = useState('simple')
+  const [chargeType, setChargeType] = useState('spot')
   const [resetKey, setResetKey] = useState(0)
 
   const scenarioId = complexity === 'off'
@@ -94,63 +96,87 @@ export default function App() {
 
   return (
     <div style={{ maxWidth: 900, margin: '0 auto', padding: '0 20px 40px' }}>
-      <div className="scenario-bar">
-        <div className="scenario-bar-header">
-          <span className="scenario-bar-title">Prototype Scenarios</span>
-          <span className="scenario-bar-desc">Select a configuration to preview</span>
-        </div>
-        <div className="scenario-rows">
-          <div className="scenario-row">
-            <span className="scenario-row-label">Config</span>
-            <div className="scenario-toggle-group">
-              <button
-                className={`scenario-toggle ${complexity === 'off' ? 'active' : ''}`}
-                onClick={() => selectComplexity('off')}
-              >
-                Payments Off
-              </button>
-              <button
-                className={`scenario-toggle ${complexity === 'simple' ? 'active' : ''}`}
-                onClick={() => selectComplexity('simple')}
-              >
-                Simple
-              </button>
-              <button
-                className={`scenario-toggle ${complexity === 'advanced' ? 'active' : ''}`}
-                onClick={() => selectComplexity('advanced')}
-              >
-                Advanced
-              </button>
+      {/* View switcher */}
+      <div className="view-switcher">
+        <button
+          className={`view-btn ${view === 'edit' ? 'active' : ''}`}
+          onClick={() => setView('edit')}
+        >
+          Edit Signup
+        </button>
+        <button
+          className={`view-btn ${view === 'create' ? 'active' : ''}`}
+          onClick={() => setView('create')}
+        >
+          Create Signup
+        </button>
+      </div>
+
+      {view === 'edit' && (
+        <>
+          <div className="scenario-bar">
+            <div className="scenario-bar-header">
+              <span className="scenario-bar-title">Prototype Scenarios</span>
+              <span className="scenario-bar-desc">Select a configuration to preview</span>
+            </div>
+            <div className="scenario-rows">
+              <div className="scenario-row">
+                <span className="scenario-row-label">Config</span>
+                <div className="scenario-toggle-group">
+                  <button
+                    className={`scenario-toggle ${complexity === 'off' ? 'active' : ''}`}
+                    onClick={() => selectComplexity('off')}
+                  >
+                    Payments Off
+                  </button>
+                  <button
+                    className={`scenario-toggle ${complexity === 'simple' ? 'active' : ''}`}
+                    onClick={() => selectComplexity('simple')}
+                  >
+                    Simple
+                  </button>
+                  <button
+                    className={`scenario-toggle ${complexity === 'advanced' ? 'active' : ''}`}
+                    onClick={() => selectComplexity('advanced')}
+                  >
+                    Advanced
+                  </button>
+                </div>
+              </div>
+              <span className="scenario-hint">
+                {complexity === 'off' && 'No payments configured on this signup.'}
+                {complexity === 'simple' && 'Base pricing only — no early bird or late fee windows.'}
+                {complexity === 'advanced' && 'Includes early bird discounts and late fee date windows.'}
+              </span>
+
+              {complexity !== 'off' && (
+                <div className="scenario-row">
+                  <span className="scenario-row-label">Charge mode</span>
+                  <div className="scenario-toggle-group">
+                    <button
+                      className={`scenario-toggle ${chargeType === 'spot' ? 'active' : ''}`}
+                      onClick={() => selectChargeType('spot')}
+                    >
+                      Per Spot
+                    </button>
+                    <button
+                      className={`scenario-toggle ${chargeType === 'household' ? 'active' : ''}`}
+                      onClick={() => selectChargeType('household')}
+                    >
+                      Per Household
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-          <span className="scenario-hint">
-            {complexity === 'off' && 'No payments configured on this signup.'}
-            {complexity === 'simple' && 'Base pricing only — no early bird or late fee windows.'}
-            {complexity === 'advanced' && 'Includes early bird discounts and late fee date windows.'}
-          </span>
+          <SignupEditor key={resetKey} initialConfig={config} />
+        </>
+      )}
 
-          {complexity !== 'off' && (
-            <div className="scenario-row">
-              <span className="scenario-row-label">Charge mode</span>
-              <div className="scenario-toggle-group">
-                <button
-                  className={`scenario-toggle ${chargeType === 'spot' ? 'active' : ''}`}
-                  onClick={() => selectChargeType('spot')}
-                >
-                  Per Spot
-                </button>
-                <button
-                  className={`scenario-toggle ${chargeType === 'household' ? 'active' : ''}`}
-                  onClick={() => selectChargeType('household')}
-                >
-                  Per Household
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-      <SignupEditor key={resetKey} initialConfig={config} />
+      {view === 'create' && (
+        <CreateSignupFlow />
+      )}
     </div>
   )
 }

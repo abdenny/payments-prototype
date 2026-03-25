@@ -1,0 +1,487 @@
+.create-flow {
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  min-height: 500px;
+  padding: 24px;
+}
+
+.create-flow-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.create-flow-icon {
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: #e8e0f0;
+  border-radius: 50%;
+  font-size: 18px;
+}
+
+.create-flow-header h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+/* Step bar */
+.step-bar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e0e0e4;
+  margin-bottom: 28px;
+}
+
+.step-btn {
+  padding: 6px 12px;
+  border: none;
+  background: none;
+  font-size: 14px;
+  font-family: inherit;
+  color: #999;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s;
+}
+
+.step-btn:hover {
+  color: #666;
+}
+
+.step-btn.active {
+  color: #3d5a80;
+  font-weight: 600;
+  border-bottom-color: #3d5a80;
+}
+
+.step-btn.completed {
+  color: #666;
+}
+
+.step-sep {
+  color: #ccc;
+  font-size: 16px;
+  user-select: none;
+}
+
+/* Step content */
+.step-content {
+  max-width: 560px;
+}
+
+/* Placeholder steps */
+.step-placeholder {
+  text-align: center;
+  padding: 40px 0;
+}
+
+.step-placeholder h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 8px;
+}
+
+.step-placeholder p {
+  font-size: 14px;
+  color: #888;
+}
+
+.step-placeholder-note {
+  font-style: italic;
+  color: #bbb !important;
+  margin-top: 8px;
+}
+
+/* Step actions */
+.step-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 32px;
+}
+
+.step-btn-back {
+  padding: 10px 24px;
+  border: 1px solid #d1d5db;
+  border-radius: 24px;
+  background: #fff;
+  color: #666;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.step-btn-back:hover {
+  background: #f5f5f8;
+}
+
+.step-btn-next {
+  padding: 10px 28px;
+  border: none;
+  border-radius: 24px;
+  background: #3d9be9;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s;
+  margin-left: auto;
+}
+
+.step-btn-next:hover:not(:disabled) {
+  background: #2d7bc9;
+}
+
+.step-btn-next:disabled {
+  background: #c0c4cc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Take Payments step */
+.step-take-payments h3 {
+  font-size: 17px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 24px;
+}
+
+.payment-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.payment-choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.payment-choice:hover {
+  background: #f8f9fc;
+}
+
+.payment-choice.selected {
+  background: #f0f4fa;
+}
+
+.payment-choice input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #c0c4cc;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  margin-top: 1px;
+  background: #fff;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.payment-choice.selected input[type="radio"] {
+  border-color: #34d399;
+  background: #34d399;
+}
+
+.payment-choice.selected input[type="radio"]::after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 3px;
+  width: 6px;
+  height: 10px;
+  border: solid #fff;
+  border-width: 0 2.5px 2.5px 0;
+  transform: rotate(45deg);
+}
+
+.payment-choice-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.payment-choice-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #3d5a80;
+}
+
+.payment-choice-desc {
+  font-size: 13px;
+  color: #999;
+  line-height: 1.4;
+}
+
+/* Pricing step */
+.step-pricing h3 {
+  font-size: 17px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 16px;
+}
+
+.donation-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #f0f4fa;
+  border: 1px solid #d0daea;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #4a5a8a;
+  margin-bottom: 16px;
+}
+
+.donation-note svg {
+  flex-shrink: 0;
+}
+
+.create-charge-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.create-charge-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.create-inline-pricing {
+  margin-left: 36px;
+  margin-top: 12px;
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Pricing card */
+.create-pricing-section {
+  margin-bottom: 20px;
+}
+
+.create-pricing-card {
+  background: #f5f5f8;
+  border-radius: 12px;
+  border: 1px solid #e8e8ec;
+  overflow: visible;
+}
+
+.create-pricing-card > *:first-child {
+  border-radius: 12px 12px 0 0;
+}
+
+.create-pricing-card > *:last-child {
+  border-radius: 0 0 12px 12px;
+}
+
+.create-pricing-card > *:only-child {
+  border-radius: 12px;
+}
+
+.create-pricing-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px 20px;
+}
+
+.create-pricing-max {
+  background: #eef0f4;
+  border-top: 1px dashed #ccc;
+}
+
+.create-pricing-fields {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.create-pricing-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.create-pricing-label {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+.create-spot-note {
+  padding: 12px 20px;
+  font-size: 13px;
+  color: #888;
+  font-style: italic;
+  border-top: 1px solid #e8e8ec;
+}
+
+/* Advanced section */
+.create-advanced-section {
+  margin-bottom: 8px;
+}
+
+.create-advanced-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0;
+  border: none;
+  background: none;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  color: #3d5a80;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.create-advanced-toggle:hover {
+  color: #2a4060;
+}
+
+.create-advanced-arrow {
+  font-size: 12px;
+  width: 16px;
+}
+
+.create-advanced-content {
+  margin-top: 8px;
+}
+
+.create-time-card {
+  background: #f5f5f8;
+  border-radius: 12px;
+  border: 1px solid #e8e8ec;
+  overflow: visible;
+}
+
+.create-time-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  border-bottom: 1px solid #e0e0e4;
+}
+
+.create-time-toggle-row:last-child {
+  border-bottom: none;
+}
+
+.create-time-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+}
+
+.create-time-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.create-time-desc {
+  font-size: 13px;
+  color: #999;
+}
+
+.create-time-detail {
+  margin-left: 28px;
+  border-left: 2px solid #3d5a80;
+  border-bottom: 1px solid #e0e0e4;
+}
+
+.create-time-detail-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  border-bottom: 1px solid #eaebee;
+}
+
+.create-time-detail-row:last-child {
+  border-bottom: none;
+}
+
+.create-time-detail-row:nth-child(odd) {
+  background: #fff;
+}
+
+.create-time-detail-row:nth-child(even) {
+  background: #f5f5f8;
+}
+
+.create-time-label {
+  font-size: 14px;
+  color: #333;
+  flex: 1;
+}
+
+.create-time-detail-row .date-input {
+  margin-left: auto;
+}
+
+.create-time-detail-row .price-input-wrap {
+  min-width: 110px;
+  max-width: 140px;
+  margin-left: auto;
+}
+
+.create-time-max-row {
+  flex-wrap: wrap;
+}
+
+.create-time-max-fields {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.create-time-max-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.create-time-max-fields .price-input-wrap {
+  min-width: 110px;
+  max-width: 140px;
+}
+
+.create-time-spot-note {
+  padding: 10px 18px;
+  font-size: 12px;
+  color: #888;
+  font-style: italic;
+  background: #fff;
+}
