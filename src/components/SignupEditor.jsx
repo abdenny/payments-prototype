@@ -10,17 +10,16 @@ const TABS = [
   { name: 'Signup Options', icon: '≡' },
 ]
 
-export default function SignupEditor() {
-  const [activeTab, setActiveTab] = useState('Items')
-  const [paymentsEnabled, setPaymentsEnabled] = useState(true)
-  const [chargeMode, setChargeMode] = useState('per-household')
+export default function SignupEditor({ initialConfig = {} }) {
+  const [activeTab, setActiveTab] = useState(initialConfig.activeTab || 'Items')
+  const [paymentsEnabled, setPaymentsEnabled] = useState(initialConfig.paymentsEnabled ?? true)
+  const [chargeMode, setChargeMode] = useState(initialConfig.chargeMode || 'per-spot')
 
-  // Signup-level household pricing state (lifted so items can read it)
-  const [signupPricing, setSignupPricing] = useState({
+  const [signupPricing, setSignupPricing] = useState(initialConfig.signupPricing || {
     pricingMode: 'per-spot',
     price: '4',
-    maxPriceEnabled: true,
-    maxPrice: '12',
+    maxPriceEnabled: false,
+    maxPrice: '',
     earlyBirdEnabled: false,
     earlyBirdDate: '2026-06-01',
     earlyBirdPrice: '5',
@@ -31,8 +30,7 @@ export default function SignupEditor() {
     lateMaxPrice: '12',
   })
 
-  // Per-spot time-based dates (lifted so items can read them)
-  const [spotTimePricing, setSpotTimePricing] = useState({
+  const [spotTimePricing, setSpotTimePricing] = useState(initialConfig.spotTimePricing || {
     earlyBirdEnabled: false,
     earlyBirdDate: '2026-06-01',
     lateFeeEnabled: false,
@@ -74,6 +72,7 @@ export default function SignupEditor() {
             spotTimePricing={spotTimePricing}
             setSpotTimePricing={setSpotTimePricing}
             navigateToItems={navigateToItems}
+            initialSpotMax={initialConfig.spotMax}
           />
         )}
         {activeTab === 'Items' && (

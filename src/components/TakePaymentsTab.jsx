@@ -79,7 +79,7 @@ function InfoTooltip({ text }) {
   )
 }
 
-export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, chargeMode, setChargeMode, signupPricing, setSignupPricing, spotTimePricing, setSpotTimePricing, navigateToItems }) {
+export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, chargeMode, setChargeMode, signupPricing, setSignupPricing, spotTimePricing, setSpotTimePricing, navigateToItems, initialSpotMax }) {
   const [selectedFund, setSelectedFund] = useState('Signup Fund - Fish Fry')
 
   // Destructure signup-level pricing
@@ -106,8 +106,8 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
   const setLateMaxPrice = (v) => updatePricing({ lateMaxPrice: v })
 
   // Per-spot options
-  const [spotMaxPriceEnabled, setSpotMaxPriceEnabled] = useState(false)
-  const [spotMaxPrice, setSpotMaxPrice] = useState('')
+  const [spotMaxPriceEnabled, setSpotMaxPriceEnabled] = useState(initialSpotMax?.enabled ?? false)
+  const [spotMaxPrice, setSpotMaxPrice] = useState(initialSpotMax?.price ?? '')
   const spotMaxPriceRef = useRef(null)
   const householdMaxPriceRef = useRef(null)
 
