@@ -1,0 +1,88 @@
+.signup-editor {
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  min-height: 600px;
+}
+
+.signup-editor-header {
+  padding: 20px 24px 0;
+}
+
+.signup-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.signup-icon {
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: #e8e0f0;
+  border-radius: 50%;
+  font-size: 18px;
+}
+
+.signup-editor-header h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.tab-bar {
+  display: flex;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 0 24px;
+  margin-top: 12px;
+  gap: 0;
+}
+
+.tab-button {
+  padding: 10px 16px;
+  border: none;
+  background: none;
+  font-size: 14px;
+  font-weight: 400;
+  color: #666;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.15s, border-color 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tab-icon {
+  font-size: 14px;
+  opacity: 0.6;
+}
+
+.tab-button:hover {
+  color: #333;
+}
+
+.tab-button.active {
+  color: #4a5a8a;
+  font-weight: 500;
+  border-bottom-color: #4a5a8a;
+}
+
+.tab-button.active .tab-icon {
+  opacity: 1;
+}
+
+.tab-content {
+  padding: 24px;
+}
+
+.placeholder-tab {
+  color: #999;
+  font-style: italic;
+  padding: 40px 0;
+  text-align: center;
+}

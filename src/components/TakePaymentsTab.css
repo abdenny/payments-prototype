@@ -1,0 +1,484 @@
+.take-payments-tab {
+  max-width: 700px;
+}
+
+/* ── Main enable checkbox ── */
+.payments-checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.payments-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #c0c4cc;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  background: #fff;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.payments-checkbox:checked {
+  background-color: #3d5a80;
+  border-color: #3d5a80;
+}
+
+.payments-checkbox:checked::after {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 3px;
+  width: 6px;
+  height: 11px;
+  border: solid #fff;
+  border-width: 0 2.5px 2.5px 0;
+  transform: rotate(45deg);
+}
+
+.payments-checkbox-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+/* ── Payment settings ── */
+.payment-settings {
+  margin-top: 24px;
+  padding-left: 2px;
+}
+
+/* ── Fund ── */
+.fund-section {
+  margin-bottom: 28px;
+}
+
+.fund-label {
+  display: block;
+  font-size: 14px;
+  color: #3d5a80;
+  margin-bottom: 8px;
+}
+
+.fund-select {
+  padding: 12px 44px 12px 16px;
+  border: 1px solid #c0c4cc;
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+  color: #333;
+  background: #fff;
+  min-width: 320px;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+}
+
+.fund-select:focus {
+  border-color: #3d5a80;
+  box-shadow: 0 0 0 2px rgba(61, 90, 128, 0.15);
+}
+
+/* ── Charge options (radio) ── */
+.charge-options {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.charge-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.charge-radio {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #c0c4cc;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  margin-top: 1px;
+  background: #fff;
+  transition: border-color 0.15s;
+}
+
+.charge-radio:checked {
+  border-color: #3d5a80;
+}
+
+.charge-radio:checked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  background-color: #3d5a80;
+  border-radius: 50%;
+}
+
+.charge-option-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.charge-option-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.charge-option-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #3d5a80;
+}
+
+.charge-option-desc {
+  font-size: 13px;
+  color: #999;
+  line-height: 1.5;
+}
+
+.pricing-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border: 1px solid #c0c4cc;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #555;
+  background: #fff;
+}
+
+/* ── Icon circle ── */
+.icon-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #3d5a80;
+  flex-shrink: 0;
+}
+
+/* ── Pricing card ── */
+.pricing-card {
+  background: #f5f5f8;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e8e8ec;
+}
+
+/* ── Pricing row ── */
+.pricing-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e0e0e4;
+}
+
+.pricing-row.no-border {
+  border-bottom: none;
+}
+
+.pricing-row-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  flex-wrap: wrap;
+}
+
+.pricing-label {
+  font-size: 15px;
+  color: #333;
+  white-space: nowrap;
+}
+
+/* ── Price input ── */
+.price-input-wrap {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  overflow: hidden;
+  min-width: 100px;
+  max-width: 160px;
+}
+
+.price-prefix {
+  padding: 8px 0 8px 12px;
+  color: #888;
+  font-size: 15px;
+}
+
+.price-input {
+  border: none;
+  outline: none;
+  padding: 8px 12px 8px 6px;
+  font-size: 15px;
+  width: 100%;
+  font-family: inherit;
+  background: transparent;
+}
+
+/* ── Per spot / per family toggle ── */
+.price-header-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.pricing-toggle {
+  display: flex;
+  border: 1px solid #c0c4cc;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-left: auto;
+}
+
+.toggle-btn {
+  padding: 4px 12px;
+  border: none;
+  background: #fff;
+  font-size: 12px;
+  font-family: inherit;
+  color: #666;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.toggle-btn.active {
+  background: #3d5a80;
+  color: #fff;
+}
+
+.toggle-btn:first-child {
+  border-right: 1px solid #c0c4cc;
+}
+
+/* ── Max price row ── */
+.max-price-row {
+  background: #eef0f4;
+  border-top: 1px dashed #ccc;
+}
+
+.max-price-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+/* ── Small checkbox ── */
+.small-checkbox-wrap {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.small-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  border: 2px solid #c0c4cc;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  background: #fff;
+  transition: background-color 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+}
+
+.small-checkbox:checked {
+  background-color: #3d5a80;
+  border-color: #3d5a80;
+}
+
+.small-checkbox:checked::after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  width: 6px;
+  height: 11px;
+  border: solid #fff;
+  border-width: 0 2.5px 2.5px 0;
+  transform: rotate(45deg);
+}
+
+/* ── Signup level pricing section ── */
+.signup-level-pricing {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+/* ── Time-based pricing ── */
+.time-based-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+}
+
+.section-header-text {
+  font-size: 12px;
+  font-weight: 700;
+  color: #7a8aaa;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.pricing-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e0e0e4;
+}
+
+.pricing-toggle-row.no-border {
+  border-bottom: none;
+}
+
+.pricing-toggle-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+}
+
+.pricing-toggle-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.pricing-toggle-desc {
+  font-size: 13px;
+  color: #999;
+}
+
+/* ── Inline pricing detail (nested inside card) ── */
+.inline-pricing-detail {
+  margin: 0 0 0 28px;
+  border-left: 2px solid #3d5a80;
+  border-radius: 0 0 8px 0;
+  overflow: hidden;
+}
+
+.inline-pricing-detail .pricing-row:nth-child(odd) {
+  background: #fff;
+}
+
+.inline-pricing-detail .pricing-row:nth-child(even) {
+  background: #f5f5f8;
+}
+
+.inline-pricing-detail .pricing-row {
+  padding: 14px 18px;
+}
+
+/* ── Date input ── */
+.date-input {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+  color: #333;
+  background: #fff;
+  outline: none;
+  margin-left: auto;
+}
+
+.date-input:focus {
+  border-color: #3d5a80;
+  box-shadow: 0 0 0 2px rgba(61, 90, 128, 0.15);
+}
+
+/* ── Bottom options ── */
+.bottom-options {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-top: 24px;
+  border-top: 1px solid #eee;
+}
+
+.bottom-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.option-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #c0c4cc;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  margin-top: 1px;
+  background: #fff;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.option-checkbox:checked {
+  background-color: #3d5a80;
+  border-color: #3d5a80;
+}
+
+.option-checkbox:checked::after {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 3px;
+  width: 6px;
+  height: 11px;
+  border: solid #fff;
+  border-width: 0 2.5px 2.5px 0;
+  transform: rotate(45deg);
+}
+
+.require-title {
+  color: #3d5a80;
+  font-style: italic;
+}
