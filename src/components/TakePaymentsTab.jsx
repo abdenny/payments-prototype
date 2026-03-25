@@ -87,6 +87,14 @@ export default function TakePaymentsTab() {
   const [latePrice, setLatePrice] = useState('4')
   const [lateMaxPrice, setLateMaxPrice] = useState('12')
 
+  // Per-spot options
+  const [spotMaxPriceEnabled, setSpotMaxPriceEnabled] = useState(true)
+  const [spotMaxPrice, setSpotMaxPrice] = useState('12')
+  const [spotEarlyBirdEnabled, setSpotEarlyBirdEnabled] = useState(false)
+  const [spotEarlyBirdDate, setSpotEarlyBirdDate] = useState('2026-06-01')
+  const [spotLateFeeEnabled, setSpotLateFeeEnabled] = useState(false)
+  const [spotLateFeeDate, setSpotLateFeeDate] = useState('2026-08-15')
+
   // Bottom options
   const [suggestedDonation, setSuggestedDonation] = useState(false)
   const [requirePayments, setRequirePayments] = useState(false)
@@ -122,46 +130,133 @@ export default function TakePaymentsTab() {
 
           {/* Charge per spot */}
           <div className="charge-options">
-            <label className="charge-option">
-              <input
-                type="radio"
-                name="chargeMode"
-                className="charge-radio"
-                checked={chargeMode === 'per-spot'}
-                onChange={() => setChargeMode('per-spot')}
-              />
-              <div className="charge-option-content">
-                <div className="charge-option-title-row">
-                  <span className="charge-option-title">Charge per spot</span>
-                  <span className="pricing-badge">Item level pricing</span>
+            <div className="charge-option-group">
+              <label className="charge-option">
+                <input
+                  type="radio"
+                  name="chargeMode"
+                  className="charge-radio"
+                  checked={chargeMode === 'per-spot'}
+                  onChange={() => setChargeMode('per-spot')}
+                />
+                <div className="charge-option-content">
+                  <div className="charge-option-title-row">
+                    <span className="charge-option-title">Charge per spot</span>
+                    <span className="pricing-badge">Item level pricing</span>
+                  </div>
+                  <span className="charge-option-desc">
+                    This setting allows each Signup item carry an individual charge. You have the
+                    option to set prices for each item in its respective Take Payments tab.
+                  </span>
                 </div>
-                <span className="charge-option-desc">
-                  This setting allows each Signup item carry an individual charge. You have the
-                  option to set prices for each item in its respective Take Payments tab.
-                </span>
-              </div>
-            </label>
+              </label>
+
+              {chargeMode === 'per-spot' && (
+                <div className="per-spot-settings">
+                  {/* Max price card */}
+                  <PricingCard>
+                    <div className="pricing-row no-border">
+                      <IconCircle icon={<FamilyIcon />} />
+                      <div className="pricing-row-content">
+                        <div className="max-price-header">
+                          <span className="pricing-label">Max price (without fees?)</span>
+                          <SmallCheckbox
+                            checked={spotMaxPriceEnabled}
+                            onChange={(e) => setSpotMaxPriceEnabled(e.target.checked)}
+                          />
+                        </div>
+                        {spotMaxPriceEnabled && (
+                          <PriceInput value={spotMaxPrice} onChange={setSpotMaxPrice} />
+                        )}
+                      </div>
+                    </div>
+                  </PricingCard>
+
+                  {/* Time-Based Pricing */}
+                  <div className="time-based-section">
+                    <div className="section-header">
+                      <span className="section-header-text">TIME-BASED PRICING</span>
+                    </div>
+                    <PricingCard>
+                      <div className="pricing-toggle-row">
+                        <IconCircle icon={<ClockIcon />} />
+                        <div className="pricing-toggle-info">
+                          <span className="pricing-toggle-title">Early Bird Discount</span>
+                          <span className="pricing-toggle-desc">Reduced rate for early registration</span>
+                        </div>
+                        <SmallCheckbox
+                          checked={spotEarlyBirdEnabled}
+                          onChange={(e) => setSpotEarlyBirdEnabled(e.target.checked)}
+                        />
+                      </div>
+
+                      {spotEarlyBirdEnabled && (
+                        <div className="inline-pricing-detail">
+                          <PricingRow icon={<CalendarIcon />} borderBottom={false}>
+                            <span className="pricing-label">Early Bird expires:</span>
+                            <input
+                              type="date"
+                              className="date-input"
+                              value={spotEarlyBirdDate}
+                              onChange={(e) => setSpotEarlyBirdDate(e.target.value)}
+                            />
+                          </PricingRow>
+                        </div>
+                      )}
+
+                      <div className={`pricing-toggle-row ${spotLateFeeEnabled ? '' : 'no-border'}`}>
+                        <IconCircle icon={<HourglassIcon />} />
+                        <div className="pricing-toggle-info">
+                          <span className="pricing-toggle-title">Late Fees</span>
+                          <span className="pricing-toggle-desc">Higher rate for late registration</span>
+                        </div>
+                        <SmallCheckbox
+                          checked={spotLateFeeEnabled}
+                          onChange={(e) => setSpotLateFeeEnabled(e.target.checked)}
+                        />
+                      </div>
+
+                      {spotLateFeeEnabled && (
+                        <div className="inline-pricing-detail">
+                          <PricingRow icon={<CalendarIcon />} borderBottom={false}>
+                            <span className="pricing-label">Late fees kick in:</span>
+                            <input
+                              type="date"
+                              className="date-input"
+                              value={spotLateFeeDate}
+                              onChange={(e) => setSpotLateFeeDate(e.target.value)}
+                            />
+                          </PricingRow>
+                        </div>
+                      )}
+                    </PricingCard>
+                  </div>
+                </div>
+              )}
+            </div>
 
             {/* Charge per household */}
-            <label className="charge-option">
-              <input
-                type="radio"
-                name="chargeMode"
-                className="charge-radio"
-                checked={chargeMode === 'per-household'}
-                onChange={() => setChargeMode('per-household')}
-              />
-              <div className="charge-option-content">
-                <div className="charge-option-title-row">
-                  <span className="charge-option-title">Charge per household</span>
-                  <span className="pricing-badge">Signup Level Pricing</span>
+            <div className="charge-option-group">
+              <label className="charge-option">
+                <input
+                  type="radio"
+                  name="chargeMode"
+                  className="charge-radio"
+                  checked={chargeMode === 'per-household'}
+                  onChange={() => setChargeMode('per-household')}
+                />
+                <div className="charge-option-content">
+                  <div className="charge-option-title-row">
+                    <span className="charge-option-title">Charge per household</span>
+                    <span className="pricing-badge">Signup Level Pricing</span>
+                  </div>
+                  <span className="charge-option-desc">
+                    This setting allows you to either charge each household a fixed amount or create
+                    pricing tiers.
+                  </span>
                 </div>
-                <span className="charge-option-desc">
-                  This setting allows you to either charge each household a fixed amount or create
-                  pricing tiers.
-                </span>
-              </div>
-            </label>
+              </label>
+            </div>
           </div>
 
           {/* Signup Level Pricing — only when per-household is selected */}

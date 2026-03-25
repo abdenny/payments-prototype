@@ -482,3 +482,54 @@
   color: #3d5a80;
   font-style: italic;
 }
+
+/* ── Charge option group ── */
+.charge-option-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Per-spot settings ── */
+.per-spot-settings {
+  margin-top: 16px;
+  margin-left: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.spot-time-option {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.spot-time-checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.spot-time-label {
+  font-size: 14px;
+  font-weight: 600;
+  font-style: italic;
+  color: #1a1a2e;
+}
+
+.spot-time-detail {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 32px;
+}
+
+.spot-time-detail-label {
+  font-size: 13px;
+  color: #666;
+}
+
+.spot-time-detail .date-input {
+  margin-left: 0;
+}
