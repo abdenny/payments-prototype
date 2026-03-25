@@ -75,7 +75,7 @@ const CONFIGS = {
 export default function App() {
   const [view, setView] = useState('edit') // 'edit' | 'create'
   const [complexity, setComplexity] = useState('simple')
-  const [chargeType, setChargeType] = useState('spot')
+  const [chargeType, setChargeType] = useState('household')
   const [resetKey, setResetKey] = useState(0)
 
   const scenarioId = complexity === 'off'
