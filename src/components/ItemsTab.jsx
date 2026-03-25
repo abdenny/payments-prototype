@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef } from 'react'
 import './ItemsTab.css'
 
 let nextId = 2
@@ -113,14 +113,29 @@ function ItemInfoSubTab({ item, onRename }) {
   )
 }
 
+function InfoTooltip({ text }) {
+  const [show, setShow] = useState(false)
+  return (
+    <span
+      className="info-tooltip-wrap"
+      onMouseEnter={() => setShow(true)}
+      onMouseLeave={() => setShow(false)}
+    >
+      <span className="info-tooltip-icon">i</span>
+      {show && <span className="info-tooltip-text">{text}</span>}
+    </span>
+  )
+}
+
 let nextFeeId = 1
 
 function ItemTakePaymentsSubTab({ chargeMode, signupPricing, spotTimePricing, navigateToPayments }) {
   const [itemPaymentsEnabled, setItemPaymentsEnabled] = useState(true)
   const [pricingMode, setPricingMode] = useState('per-spot')
   const [price, setPrice] = useState('4')
-  const [maxPriceEnabled, setMaxPriceEnabled] = useState(true)
-  const [maxPrice, setMaxPrice] = useState('12')
+  const [maxPriceEnabled, setMaxPriceEnabled] = useState(false)
+  const [maxPrice, setMaxPrice] = useState('')
+  const maxPriceRef = useRef(null)
   const [earlyBirdPrice, setEarlyBirdPrice] = useState('1.00')
   const [latePrice, setLatePrice] = useState('5.00')
   const [additionalFees, setAdditionalFees] = useState([])
@@ -143,8 +158,8 @@ function ItemTakePaymentsSubTab({ chargeMode, signupPricing, spotTimePricing, na
     setAdditionalFees(additionalFees.filter(f => f.id !== id))
   }
 
-  // For inherited display
-  const inheritedPricingLabel = signupPricing.pricingMode === 'per-spot' ? 'spot' : 'family'
+  const inheritedPricingLabel = signupPricing.pricingMode === 'per-spot' ? 'spot' : 'household'
+  const hasSpotTimePricing = spotTimePricing.earlyBirdEnabled || spotTimePricing.lateFeeEnabled
 
   return (
     <div className="item-take-payments">
@@ -156,10 +171,9 @@ function ItemTakePaymentsSubTab({ chargeMode, signupPricing, spotTimePricing, na
           onChange={(e) => setItemPaymentsEnabled(e.target.checked)}
         />
         <div className="item-payments-label">
-          <span className="payments-checkbox-label">Take payments for this Item</span>
-          <span className="item-payments-note">
-            Please note: Payments for a Signup do not include the option to cover the processing
-            fee or include an "Add-on" gift.
+          <span className="payments-checkbox-label">
+            Take payments for this Item
+            <InfoTooltip text="Processing fee coverage and add-on gifts are not available for Signup payments." />
           </span>
         </div>
       </label>
@@ -176,7 +190,7 @@ function ItemTakePaymentsSubTab({ chargeMode, signupPricing, spotTimePricing, na
                   <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                 </svg>
                 <span>
-                  Pricing is inherited from signup-level settings.{' '}
+                  Per-household pricing — configured at signup level.{' '}
                   <button className="inherited-link" onClick={navigateToPayments}>
                     Edit in Take Payments
                   </button>
@@ -199,8 +213,8 @@ function ItemTakePaymentsSubTab({ chargeMode, signupPricing, spotTimePricing, na
                           <span className={`toggle-btn ${signupPricing.pricingMode === 'per-spot' ? 'active' : ''}`}>
                             Per Spot
                           </span>
-                          <span className={`toggle-btn ${signupPricing.pricingMode === 'per-family' ? 'active' : ''}`}>
-                            Per Family
+                          <span className={`toggle-btn ${signupPricing.pricingMode === 'per-household' ? 'active' : ''}`}>
+                            Per Household
                           </span>
                         </div>
                       </div>
@@ -219,7 +233,7 @@ function ItemTakePaymentsSubTab({ chargeMode, signupPricing, spotTimePricing, na
                         </svg>
                       </span>
                       <div className="item-pricing-fields">
-                        <span className="item-pricing-label inherited-text">Maximum price per family</span>
+                        <span className="item-pricing-label inherited-text">Max per household across all items</span>
                         <div className="price-input-wrap inherited-input">
                           <span className="price-prefix">$</span>
                           <input type="text" className="price-input" value={signupPricing.maxPrice} readOnly />
@@ -255,7 +269,7 @@ function ItemTakePaymentsSubTab({ chargeMode, signupPricing, spotTimePricing, na
                         </svg>
                       </span>
                       <div className="inherited-time-info">
-                        <span className="inherited-time-title">Late Pricing</span>
+                        <span className="inherited-time-title">Late Fee</span>
                         <span className="inherited-time-detail">
                           ${signupPricing.latePrice}/{inheritedPricingLabel} after {new Date(signupPricing.lateDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                         </span>
@@ -267,160 +281,229 @@ function ItemTakePaymentsSubTab({ chargeMode, signupPricing, spotTimePricing, na
             </div>
           ) : (
             /* ── Editable pricing (per-spot mode) ── */
-            <div className="item-pricing-widget">
-              <div className="item-pricing-card">
-                <div className="item-pricing-main">
-                  <span className="icon-circle" style={{ width: 36, height: 36, minWidth: 36 }}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="12" y1="1" x2="12" y2="23" />
-                      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                    </svg>
-                  </span>
-                  <div className="item-pricing-fields">
-                    <div className="item-pricing-header">
-                      <span className="item-pricing-label">Price</span>
-                      <div className="pricing-toggle">
-                        <button
-                          className={`toggle-btn ${pricingMode === 'per-spot' ? 'active' : ''}`}
-                          onClick={() => setPricingMode('per-spot')}
-                        >
-                          Per Spot
-                        </button>
-                        <button
-                          className={`toggle-btn ${pricingMode === 'per-family' ? 'active' : ''}`}
-                          onClick={() => setPricingMode('per-family')}
-                        >
-                          Per Family
-                        </button>
-                      </div>
-                    </div>
-                    <div className="price-input-wrap">
-                      <span className="price-prefix">$</span>
-                      <input
-                        type="text"
-                        className="price-input"
-                        value={price}
-                        onChange={(e) => {
-                          const val = e.target.value
-                          if (/^\d*\.?\d{0,2}$/.test(val) || val === '') {
-                            setPrice(val)
-                          }
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
+            <>
+              {/* Per-spot info banner */}
+              <div className="spot-info-banner">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="16" x2="12" y2="12" />
+                  <line x1="12" y1="8" x2="12.01" y2="8" />
+                </svg>
+                <span>
+                  {hasSpotTimePricing
+                    ? <>Per-spot pricing — dates from signup level. <button className="inherited-link" onClick={navigateToPayments}>Edit dates</button></>
+                    : <>Per-spot pricing — time-based discounts can be enabled at signup level. <button className="inherited-link" onClick={navigateToPayments}>Go to Take Payments</button></>
+                  }
+                </span>
+              </div>
 
-                {pricingMode === 'per-spot' && (
-                  <div className="item-pricing-max">
+              <div className="item-pricing-widget">
+                <div className="item-pricing-card">
+                  <div className="item-pricing-main">
                     <span className="icon-circle" style={{ width: 36, height: 36, minWidth: 36 }}>
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
-                        <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="12" y1="1" x2="12" y2="23" />
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
                       </svg>
                     </span>
                     <div className="item-pricing-fields">
-                      <div className="item-max-header">
-                        <span className="item-pricing-label">Max price (without fees?)</span>
-                        <label className="small-checkbox-wrap">
-                          <input
-                            type="checkbox"
-                            className="small-checkbox"
-                            checked={maxPriceEnabled}
-                            onChange={(e) => setMaxPriceEnabled(e.target.checked)}
-                          />
-                        </label>
-                      </div>
-                      {maxPriceEnabled && (
-                        <div className="price-input-wrap">
-                          <span className="price-prefix">$</span>
-                          <input
-                            type="text"
-                            className="price-input"
-                            value={maxPrice}
-                            onChange={(e) => {
-                              const val = e.target.value
-                              if (/^\d*\.?\d{0,2}$/.test(val) || val === '') {
-                                setMaxPrice(val)
-                              }
-                            }}
-                          />
+                      <div className="item-pricing-header">
+                        <span className="item-pricing-label">Price per {pricingMode === 'per-spot' ? 'spot' : 'household'}</span>
+                        <div className="pricing-toggle">
+                          <button
+                            className={`toggle-btn ${pricingMode === 'per-spot' ? 'active' : ''}`}
+                            onClick={() => setPricingMode('per-spot')}
+                          >
+                            Per Spot
+                          </button>
+                          <button
+                            className={`toggle-btn ${pricingMode === 'per-household' ? 'active' : ''}`}
+                            onClick={() => setPricingMode('per-household')}
+                          >
+                            Per Household
+                          </button>
                         </div>
+                      </div>
+                      <div className="price-input-wrap">
+                        <span className="price-prefix">$</span>
+                        <input
+                          type="text"
+                          className="price-input"
+                          value={price}
+                          onChange={(e) => {
+                            const val = e.target.value
+                            if (/^\d*\.?\d{0,2}$/.test(val) || val === '') {
+                              setPrice(val)
+                            }
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {pricingMode === 'per-spot' && (
+                    <div className="item-pricing-max">
+                      <span className="icon-circle" style={{ width: 36, height: 36, minWidth: 36 }}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+                          <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                        </svg>
+                      </span>
+                      <div className="item-pricing-fields">
+                        <div className="item-max-header">
+                          <span className="item-pricing-label">
+                            Max per household for this item?
+                            <InfoTooltip text="Caps what a household pays for this specific item, regardless of how many spots they take." />
+                          </span>
+                          <label className="small-checkbox-wrap">
+                            <input
+                              type="checkbox"
+                              className="small-checkbox"
+                              checked={maxPriceEnabled}
+                              onChange={(e) => {
+                                setMaxPriceEnabled(e.target.checked)
+                                if (e.target.checked) setTimeout(() => maxPriceRef.current?.focus(), 0)
+                              }}
+                            />
+                          </label>
+                        </div>
+                        {maxPriceEnabled && (
+                          <div className="price-input-wrap">
+                            <span className="price-prefix">$</span>
+                            <input
+                              ref={maxPriceRef}
+                              type="text"
+                              className="price-input"
+                              value={maxPrice}
+                              onChange={(e) => {
+                                const val = e.target.value
+                                if (/^\d*\.?\d{0,2}$/.test(val) || val === '') {
+                                  setMaxPrice(val)
+                                }
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Time-based pricing inputs (per-spot mode) */}
+                {hasSpotTimePricing && (
+                  <div className="item-time-pricing">
+                    <div className="section-header">
+                      <span className="section-header-text">TIME-BASED PRICING</span>
+                    </div>
+                    <div className="item-time-card">
+                      {spotTimePricing.earlyBirdEnabled && (
+                        <>
+                          <div className="item-time-card-header">
+                            <span className="icon-circle" style={{ width: 32, height: 32, minWidth: 32 }}>
+                              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="12" cy="12" r="10" />
+                                <polyline points="12 6 12 12 16 14" />
+                              </svg>
+                            </span>
+                            <span className="item-time-card-title">Early Bird</span>
+                          </div>
+                          <div className="item-time-card-detail">
+                            <div className="item-time-card-row">
+                              <span className="icon-circle" style={{ width: 32, height: 32, minWidth: 32 }}>
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                  <line x1="16" y1="2" x2="16" y2="6" />
+                                  <line x1="8" y1="2" x2="8" y2="6" />
+                                  <line x1="3" y1="10" x2="21" y2="10" />
+                                </svg>
+                              </span>
+                              <span className="item-time-card-label">Discount ends</span>
+                              <span className="item-time-card-date">
+                                {new Date(spotTimePricing.earlyBirdDate + 'T00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                              </span>
+                            </div>
+                            <div className="item-time-card-row">
+                              <span className="icon-circle" style={{ width: 32, height: 32, minWidth: 32 }}>
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                  <line x1="12" y1="1" x2="12" y2="23" />
+                                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                                </svg>
+                              </span>
+                              <span className="item-time-card-label">Price per spot</span>
+                              <div className="price-input-wrap">
+                                <span className="price-prefix">$</span>
+                                <input
+                                  type="text"
+                                  className="price-input"
+                                  value={earlyBirdPrice}
+                                  onChange={(e) => {
+                                    const val = e.target.value
+                                    if (/^\d*\.?\d{0,2}$/.test(val) || val === '') {
+                                      setEarlyBirdPrice(val)
+                                    }
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      )}
+
+                      {spotTimePricing.lateFeeEnabled && (
+                        <>
+                          <div className={`item-time-card-header ${spotTimePricing.earlyBirdEnabled ? 'with-divider' : ''}`}>
+                            <span className="icon-circle" style={{ width: 32, height: 32, minWidth: 32 }}>
+                              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M5 22h14M5 2h14M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2" />
+                              </svg>
+                            </span>
+                            <span className="item-time-card-title">Late Fee</span>
+                          </div>
+                          <div className="item-time-card-detail">
+                            <div className="item-time-card-row">
+                              <span className="icon-circle" style={{ width: 32, height: 32, minWidth: 32 }}>
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                  <line x1="16" y1="2" x2="16" y2="6" />
+                                  <line x1="8" y1="2" x2="8" y2="6" />
+                                  <line x1="3" y1="10" x2="21" y2="10" />
+                                </svg>
+                              </span>
+                              <span className="item-time-card-label">Late fee starts</span>
+                              <span className="item-time-card-date">
+                                {new Date(spotTimePricing.lateFeeDate + 'T00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                              </span>
+                            </div>
+                            <div className="item-time-card-row">
+                              <span className="icon-circle" style={{ width: 32, height: 32, minWidth: 32 }}>
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                  <line x1="12" y1="1" x2="12" y2="23" />
+                                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                                </svg>
+                              </span>
+                              <span className="item-time-card-label">Price per spot</span>
+                              <div className="price-input-wrap">
+                                <span className="price-prefix">$</span>
+                                <input
+                                  type="text"
+                                  className="price-input"
+                                  value={latePrice}
+                                  onChange={(e) => {
+                                    const val = e.target.value
+                                    if (/^\d*\.?\d{0,2}$/.test(val) || val === '') {
+                                      setLatePrice(val)
+                                    }
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </>
                       )}
                     </div>
                   </div>
                 )}
               </div>
-
-              {/* Time-based pricing inputs (per-spot mode) */}
-              {(spotTimePricing.earlyBirdEnabled || spotTimePricing.lateFeeEnabled) && (
-                <div className="item-time-pricing">
-                  {spotTimePricing.earlyBirdEnabled && (
-                    <div className="item-time-block">
-                      <div className="item-time-header">
-                        <span className="icon-circle" style={{ width: 28, height: 28, minWidth: 28 }}>
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <circle cx="12" cy="12" r="10" />
-                            <polyline points="12 6 12 12 16 14" />
-                          </svg>
-                        </span>
-                        <span className="item-time-title">Early Bird</span>
-                      </div>
-                      <div className="item-time-row">
-                        <span className="item-time-date">
-                          Price before {new Date(spotTimePricing.earlyBirdDate + 'T00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}:
-                        </span>
-                        <div className="price-input-wrap">
-                          <span className="price-prefix">$</span>
-                          <input
-                            type="text"
-                            className="price-input"
-                            value={earlyBirdPrice}
-                            onChange={(e) => {
-                              const val = e.target.value
-                              if (/^\d*\.?\d{0,2}$/.test(val) || val === '') {
-                                setEarlyBirdPrice(val)
-                              }
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {spotTimePricing.lateFeeEnabled && (
-                    <div className="item-time-block">
-                      <div className="item-time-header">
-                        <span className="icon-circle" style={{ width: 28, height: 28, minWidth: 28 }}>
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M5 22h14M5 2h14M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2" />
-                          </svg>
-                        </span>
-                        <span className="item-time-title">Late</span>
-                      </div>
-                      <div className="item-time-row">
-                        <span className="item-time-date">
-                          Price after {new Date(spotTimePricing.lateFeeDate + 'T00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}:
-                        </span>
-                        <div className="price-input-wrap">
-                          <span className="price-prefix">$</span>
-                          <input
-                            type="text"
-                            className="price-input"
-                            value={latePrice}
-                            onChange={(e) => {
-                              const val = e.target.value
-                              if (/^\d*\.?\d{0,2}$/.test(val) || val === '') {
-                                setLatePrice(val)
-                              }
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
+            </>
           )}
 
           {/* Additional Fees — always editable */}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import './TakePaymentsTab.css'
 
 const FUND_OPTIONS = [
@@ -18,11 +18,12 @@ function IconCircle({ icon, size = 36 }) {
   )
 }
 
-function PriceInput({ value, onChange, placeholder = '0' }) {
+const PriceInput = React.forwardRef(({ value, onChange, placeholder = '0' }, ref) => {
   return (
     <div className="price-input-wrap">
       <span className="price-prefix">$</span>
       <input
+        ref={ref}
         type="text"
         className="price-input"
         placeholder={placeholder}
@@ -36,7 +37,7 @@ function PriceInput({ value, onChange, placeholder = '0' }) {
       />
     </div>
   )
-}
+})
 
 function SmallCheckbox({ checked, onChange }) {
   return (
@@ -64,7 +65,21 @@ function PricingRow({ icon, children, borderBottom = true }) {
   )
 }
 
-export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, chargeMode, setChargeMode, signupPricing, setSignupPricing, spotTimePricing, setSpotTimePricing }) {
+function InfoTooltip({ text }) {
+  const [show, setShow] = useState(false)
+  return (
+    <span
+      className="info-tooltip-wrap"
+      onMouseEnter={() => setShow(true)}
+      onMouseLeave={() => setShow(false)}
+    >
+      <span className="info-tooltip-icon">i</span>
+      {show && <span className="info-tooltip-text">{text}</span>}
+    </span>
+  )
+}
+
+export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, chargeMode, setChargeMode, signupPricing, setSignupPricing, spotTimePricing, setSpotTimePricing, navigateToItems }) {
   const [selectedFund, setSelectedFund] = useState('Signup Fund - Fish Fry')
 
   // Destructure signup-level pricing
@@ -91,8 +106,16 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
   const setLateMaxPrice = (v) => updatePricing({ lateMaxPrice: v })
 
   // Per-spot options
-  const [spotMaxPriceEnabled, setSpotMaxPriceEnabled] = useState(true)
-  const [spotMaxPrice, setSpotMaxPrice] = useState('12')
+  const [spotMaxPriceEnabled, setSpotMaxPriceEnabled] = useState(false)
+  const [spotMaxPrice, setSpotMaxPrice] = useState('')
+  const spotMaxPriceRef = useRef(null)
+  const householdMaxPriceRef = useRef(null)
+
+  // Time-based max per household toggles
+  const [earlyBirdMaxEnabled, setEarlyBirdMaxEnabled] = useState(false)
+  const [lateMaxEnabled, setLateMaxEnabled] = useState(false)
+  const earlyBirdMaxRef = useRef(null)
+  const lateMaxRef = useRef(null)
 
   const updateSpotTime = (updates) => setSpotTimePricing({ ...spotTimePricing, ...updates })
   const spotEarlyBirdEnabled = spotTimePricing.earlyBirdEnabled
@@ -108,7 +131,7 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
   const [suggestedDonation, setSuggestedDonation] = useState(false)
   const [requirePayments, setRequirePayments] = useState(false)
 
-  const pricingLabel = pricingMode === 'per-spot' ? 'student' : 'family'
+  const pricingLabel = pricingMode === 'per-spot' ? 'spot' : 'household'
 
   return (
     <div className="take-payments-tab">
@@ -151,11 +174,9 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
                 <div className="charge-option-content">
                   <div className="charge-option-title-row">
                     <span className="charge-option-title">Charge per spot</span>
-
                   </div>
                   <span className="charge-option-desc">
-                    This setting allows each Signup item carry an individual charge. You have the
-                    option to set prices for each item in its respective Take Payments tab.
+                    Set prices on each item's Take Payments tab.
                   </span>
                 </div>
               </label>
@@ -168,17 +189,20 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
                       <IconCircle icon={<FamilyIcon />} />
                       <div className="pricing-row-content">
                         <div className="max-price-header">
-                          <span className="pricing-label">Maximum price per family</span>
+                          <span className="pricing-label">
+                            Max per household across all items?
+                            <InfoTooltip text="Caps what a household pays in total across every item in this signup. Does not include per-item fees." />
+                          </span>
                           <SmallCheckbox
                             checked={spotMaxPriceEnabled}
-                            onChange={(e) => setSpotMaxPriceEnabled(e.target.checked)}
+                            onChange={(e) => {
+                              setSpotMaxPriceEnabled(e.target.checked)
+                              if (e.target.checked) setTimeout(() => spotMaxPriceRef.current?.focus(), 0)
+                            }}
                           />
                         </div>
-                        <span className="charge-option-desc">
-                          Caps the total a family pays across all items in this signup. Additional fees on individual items are not included in this cap.
-                        </span>
                         {spotMaxPriceEnabled && (
-                          <PriceInput value={spotMaxPrice} onChange={setSpotMaxPrice} />
+                          <PriceInput ref={spotMaxPriceRef} value={spotMaxPrice} onChange={setSpotMaxPrice} />
                         )}
                       </div>
                     </div>
@@ -190,14 +214,13 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
                       <span className="section-header-text">TIME-BASED PRICING</span>
                     </div>
                     <p className="time-based-desc">
-                      Set the date ranges here. Discounted and late prices are configured on each item's Take Payments tab.
+                      Dates set here. Prices set on each item.
                     </p>
                     <PricingCard>
                       <div className="pricing-toggle-row">
                         <IconCircle icon={<ClockIcon />} />
                         <div className="pricing-toggle-info">
-                          <span className="pricing-toggle-title">Early Bird Discount</span>
-                          <span className="pricing-toggle-desc">Reduced rate for early registration</span>
+                          <span className="pricing-toggle-title">Early Bird</span>
                         </div>
                         <SmallCheckbox
                           checked={spotEarlyBirdEnabled}
@@ -208,7 +231,7 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
                       {spotEarlyBirdEnabled && (
                         <div className="inline-pricing-detail">
                           <PricingRow icon={<CalendarIcon />} borderBottom={false}>
-                            <span className="pricing-label">Early Bird expires:</span>
+                            <span className="pricing-label">Discount ends</span>
                             <input
                               type="date"
                               className="date-input"
@@ -222,8 +245,7 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
                       <div className={`pricing-toggle-row ${spotLateFeeEnabled ? '' : 'no-border'}`}>
                         <IconCircle icon={<HourglassIcon />} />
                         <div className="pricing-toggle-info">
-                          <span className="pricing-toggle-title">Late Fees</span>
-                          <span className="pricing-toggle-desc">Higher rate for late registration</span>
+                          <span className="pricing-toggle-title">Late Fee</span>
                         </div>
                         <SmallCheckbox
                           checked={spotLateFeeEnabled}
@@ -234,7 +256,7 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
                       {spotLateFeeEnabled && (
                         <div className="inline-pricing-detail">
                           <PricingRow icon={<CalendarIcon />} borderBottom={false}>
-                            <span className="pricing-label">Late fees kick in:</span>
+                            <span className="pricing-label">Late fee starts</span>
                             <input
                               type="date"
                               className="date-input"
@@ -245,6 +267,12 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
                         </div>
                       )}
                     </PricingCard>
+
+                    {navigateToItems && (
+                      <button className="cross-level-link" onClick={navigateToItems}>
+                        Set item prices &rarr;
+                      </button>
+                    )}
                   </div>
                 </div>
               )}
@@ -263,11 +291,9 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
                 <div className="charge-option-content">
                   <div className="charge-option-title-row">
                     <span className="charge-option-title">Charge per household</span>
-
                   </div>
                   <span className="charge-option-desc">
-                    This setting allows you to either charge each household a fixed amount or create
-                    pricing tiers.
+                    One price set here, applied to all items.
                   </span>
                 </div>
               </label>
@@ -292,10 +318,10 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
                           Per Spot
                         </button>
                         <button
-                          className={`toggle-btn ${pricingMode === 'per-family' ? 'active' : ''}`}
-                          onClick={() => setPricingMode('per-family')}
+                          className={`toggle-btn ${pricingMode === 'per-household' ? 'active' : ''}`}
+                          onClick={() => setPricingMode('per-household')}
                         >
-                          Per Family
+                          Per Household
                         </button>
                       </div>
                     </div>
@@ -308,14 +334,20 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
                     <IconCircle icon={<FamilyIcon />} />
                     <div className="pricing-row-content">
                       <div className="max-price-header">
-                        <span className="pricing-label">Apply a maximum price per family</span>
+                        <span className="pricing-label">
+                          Max per household across all items?
+                          <InfoTooltip text="Caps what a household pays in total across every item in this signup. Does not include per-item fees." />
+                        </span>
                         <SmallCheckbox
                           checked={maxPriceEnabled}
-                          onChange={(e) => setMaxPriceEnabled(e.target.checked)}
+                          onChange={(e) => {
+                            setMaxPriceEnabled(e.target.checked)
+                            if (e.target.checked) setTimeout(() => householdMaxPriceRef.current?.focus(), 0)
+                          }}
                         />
                       </div>
                       {maxPriceEnabled && (
-                        <PriceInput value={maxPrice} onChange={setMaxPrice} />
+                        <PriceInput ref={householdMaxPriceRef} value={maxPrice} onChange={setMaxPrice} />
                       )}
                     </div>
                   </div>
@@ -328,11 +360,10 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
                   <span className="section-header-text">TIME-BASED PRICING</span>
                 </div>
                 <PricingCard>
-                  <div className={`pricing-toggle-row ${!earlyBirdEnabled && !latePricingEnabled ? '' : ''}`}>
+                  <div className="pricing-toggle-row">
                     <IconCircle icon={<ClockIcon />} />
                     <div className="pricing-toggle-info">
-                      <span className="pricing-toggle-title">Early Bird Pricing</span>
-                      <span className="pricing-toggle-desc">Reduced rate for early registration</span>
+                      <span className="pricing-toggle-title">Early Bird</span>
                     </div>
                     <SmallCheckbox
                       checked={earlyBirdEnabled}
@@ -343,7 +374,7 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
                   {earlyBirdEnabled && (
                     <div className="inline-pricing-detail">
                       <PricingRow icon={<CalendarIcon />}>
-                        <span className="pricing-label">Pay before</span>
+                        <span className="pricing-label">Discount ends</span>
                         <input
                           type="date"
                           className="date-input"
@@ -357,8 +388,22 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
                       </PricingRow>
                       {pricingMode === 'per-spot' && (
                         <PricingRow icon={<FamilyIcon />} borderBottom={false}>
-                          <span className="pricing-label">Maximum price per family</span>
-                          <PriceInput value={earlyBirdMaxPrice} onChange={setEarlyBirdMaxPrice} />
+                          <div className="max-price-header">
+                            <span className="pricing-label">
+                              Max per household across all items?
+                              <InfoTooltip text="Caps what a household pays in total across every item in this signup. Does not include per-item fees." />
+                            </span>
+                            <SmallCheckbox
+                              checked={earlyBirdMaxEnabled}
+                              onChange={(e) => {
+                                setEarlyBirdMaxEnabled(e.target.checked)
+                                if (e.target.checked) setTimeout(() => earlyBirdMaxRef.current?.focus(), 0)
+                              }}
+                            />
+                          </div>
+                          {earlyBirdMaxEnabled && (
+                            <PriceInput ref={earlyBirdMaxRef} value={earlyBirdMaxPrice} onChange={setEarlyBirdMaxPrice} />
+                          )}
                         </PricingRow>
                       )}
                     </div>
@@ -367,8 +412,7 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
                   <div className={`pricing-toggle-row ${latePricingEnabled ? '' : 'no-border'}`}>
                     <IconCircle icon={<HourglassIcon />} />
                     <div className="pricing-toggle-info">
-                      <span className="pricing-toggle-title">Late Pricing</span>
-                      <span className="pricing-toggle-desc">Higher rate for late registration</span>
+                      <span className="pricing-toggle-title">Late Fee</span>
                     </div>
                     <SmallCheckbox
                       checked={latePricingEnabled}
@@ -379,7 +423,7 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
                   {latePricingEnabled && (
                     <div className="inline-pricing-detail">
                       <PricingRow icon={<CalendarIcon />}>
-                        <span className="pricing-label">Pay after</span>
+                        <span className="pricing-label">Late fee starts</span>
                         <input
                           type="date"
                           className="date-input"
@@ -393,8 +437,22 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
                       </PricingRow>
                       {pricingMode === 'per-spot' && (
                         <PricingRow icon={<FamilyIcon />} borderBottom={false}>
-                          <span className="pricing-label">Maximum price per family</span>
-                          <PriceInput value={lateMaxPrice} onChange={setLateMaxPrice} />
+                          <div className="max-price-header">
+                            <span className="pricing-label">
+                              Max per household across all items?
+                              <InfoTooltip text="Caps what a household pays in total across every item in this signup. Does not include per-item fees." />
+                            </span>
+                            <SmallCheckbox
+                              checked={lateMaxEnabled}
+                              onChange={(e) => {
+                                setLateMaxEnabled(e.target.checked)
+                                if (e.target.checked) setTimeout(() => lateMaxRef.current?.focus(), 0)
+                              }}
+                            />
+                          </div>
+                          {lateMaxEnabled && (
+                            <PriceInput ref={lateMaxRef} value={lateMaxPrice} onChange={setLateMaxPrice} />
+                          )}
                         </PricingRow>
                       )}
                     </div>
@@ -416,8 +474,7 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
               <div className="charge-option-content">
                 <span className="charge-option-title">Collect as suggested donation</span>
                 <span className="charge-option-desc">
-                  Checking this box sets the payment as a suggested donation. This will allow the
-                  member to edit and adjust the amount of money they donate.
+                  Members can adjust the amount.
                 </span>
               </div>
             </label>
@@ -432,7 +489,7 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
               <div className="charge-option-content">
                 <span className="charge-option-title require-title">Require Payments</span>
                 <span className="charge-option-desc">
-                  Whoever signs up will have to make the full payment due or else their spots will be forfeited!
+                  Full payment required to hold spots.
                 </span>
               </div>
             </label>

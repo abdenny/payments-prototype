@@ -40,6 +40,7 @@ export default function SignupEditor() {
   })
 
   const navigateToPayments = () => setActiveTab('Take Payments')
+  const navigateToItems = () => setActiveTab('Items')
 
   return (
     <div className="signup-editor">
@@ -72,6 +73,7 @@ export default function SignupEditor() {
             setSignupPricing={setSignupPricing}
             spotTimePricing={spotTimePricing}
             setSpotTimePricing={setSpotTimePricing}
+            navigateToItems={navigateToItems}
           />
         )}
         {activeTab === 'Items' && (
