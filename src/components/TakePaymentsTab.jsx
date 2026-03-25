@@ -64,10 +64,8 @@ function PricingRow({ icon, children, borderBottom = true }) {
   )
 }
 
-export default function TakePaymentsTab() {
-  const [enabled, setEnabled] = useState(true)
+export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, chargeMode, setChargeMode }) {
   const [selectedFund, setSelectedFund] = useState('Signup Fund - Fish Fry')
-  const [chargeMode, setChargeMode] = useState('per-household')
 
   // Signup-level pricing state
   const [pricingMode, setPricingMode] = useState('per-spot') // per-spot or per-family
@@ -107,13 +105,13 @@ export default function TakePaymentsTab() {
         <input
           type="checkbox"
           className="payments-checkbox"
-          checked={enabled}
-          onChange={(e) => setEnabled(e.target.checked)}
+          checked={paymentsEnabled}
+          onChange={(e) => setPaymentsEnabled(e.target.checked)}
         />
         <span className="payments-checkbox-label">Take payments with this Signup</span>
       </label>
 
-      {enabled && (
+      {paymentsEnabled && (
         <div className="payment-settings">
           <div className="fund-section">
             <label className="fund-label">Which fund should payments be allocated to?</label>
@@ -159,12 +157,15 @@ export default function TakePaymentsTab() {
                       <IconCircle icon={<FamilyIcon />} />
                       <div className="pricing-row-content">
                         <div className="max-price-header">
-                          <span className="pricing-label">Max price (without fees?)</span>
+                          <span className="pricing-label">Maximum price per family</span>
                           <SmallCheckbox
                             checked={spotMaxPriceEnabled}
                             onChange={(e) => setSpotMaxPriceEnabled(e.target.checked)}
                           />
                         </div>
+                        <span className="charge-option-desc">
+                          Caps the total a family pays across all items in this signup. Additional fees on individual items are not included in this cap.
+                        </span>
                         {spotMaxPriceEnabled && (
                           <PriceInput value={spotMaxPrice} onChange={setSpotMaxPrice} />
                         )}
@@ -177,6 +178,9 @@ export default function TakePaymentsTab() {
                     <div className="section-header">
                       <span className="section-header-text">TIME-BASED PRICING</span>
                     </div>
+                    <p className="time-based-desc">
+                      Set the date ranges here. Discounted and late prices are configured on each item's Take Payments tab.
+                    </p>
                     <PricingCard>
                       <div className="pricing-toggle-row">
                         <IconCircle icon={<ClockIcon />} />
@@ -336,14 +340,16 @@ export default function TakePaymentsTab() {
                           onChange={(e) => setEarlyBirdDate(e.target.value)}
                         />
                       </PricingRow>
-                      <PricingRow icon={<DollarIcon />}>
+                      <PricingRow icon={<DollarIcon />} borderBottom={pricingMode === 'per-spot'}>
                         <span className="pricing-label">Price per {pricingLabel}</span>
                         <PriceInput value={earlyBirdPrice} onChange={setEarlyBirdPrice} />
                       </PricingRow>
-                      <PricingRow icon={<FamilyIcon />} borderBottom={false}>
-                        <span className="pricing-label">Maximum price per family</span>
-                        <PriceInput value={earlyBirdMaxPrice} onChange={setEarlyBirdMaxPrice} />
-                      </PricingRow>
+                      {pricingMode === 'per-spot' && (
+                        <PricingRow icon={<FamilyIcon />} borderBottom={false}>
+                          <span className="pricing-label">Maximum price per family</span>
+                          <PriceInput value={earlyBirdMaxPrice} onChange={setEarlyBirdMaxPrice} />
+                        </PricingRow>
+                      )}
                     </div>
                   )}
 
@@ -370,14 +376,16 @@ export default function TakePaymentsTab() {
                           onChange={(e) => setLateDate(e.target.value)}
                         />
                       </PricingRow>
-                      <PricingRow icon={<DollarIcon />}>
+                      <PricingRow icon={<DollarIcon />} borderBottom={pricingMode === 'per-spot'}>
                         <span className="pricing-label">Price per {pricingLabel}</span>
                         <PriceInput value={latePrice} onChange={setLatePrice} />
                       </PricingRow>
-                      <PricingRow icon={<FamilyIcon />} borderBottom={false}>
-                        <span className="pricing-label">Maximum price per family</span>
-                        <PriceInput value={lateMaxPrice} onChange={setLateMaxPrice} />
-                      </PricingRow>
+                      {pricingMode === 'per-spot' && (
+                        <PricingRow icon={<FamilyIcon />} borderBottom={false}>
+                          <span className="pricing-label">Maximum price per family</span>
+                          <PriceInput value={lateMaxPrice} onChange={setLateMaxPrice} />
+                        </PricingRow>
+                      )}
                     </div>
                   )}
                 </PricingCard>

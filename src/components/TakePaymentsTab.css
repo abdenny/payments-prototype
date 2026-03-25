@@ -347,6 +347,14 @@
   gap: 8px;
 }
 
+.time-based-desc {
+  font-size: 13px;
+  color: #999;
+  text-align: center;
+  line-height: 1.4;
+  margin: 0;
+}
+
 .section-header {
   display: flex;
   align-items: center;

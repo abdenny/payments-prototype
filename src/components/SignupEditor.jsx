@@ -1,16 +1,19 @@
 import React, { useState } from 'react'
 import TakePaymentsTab from './TakePaymentsTab'
+import ItemsTab from './ItemsTab'
 import './SignupEditor.css'
 
 const TABS = [
   { name: 'Items', icon: '⊞' },
   { name: 'Respondent Data', icon: '⊞' },
-  { name: 'Take Payments', icon: '◉' },
+  { name: 'Take Payments', icon: '' },
   { name: 'Signup Options', icon: '≡' },
 ]
 
 export default function SignupEditor() {
-  const [activeTab, setActiveTab] = useState('Take Payments')
+  const [activeTab, setActiveTab] = useState('Items')
+  const [paymentsEnabled, setPaymentsEnabled] = useState(true)
+  const [chargeMode, setChargeMode] = useState('per-spot')
 
   return (
     <div className="signup-editor">
@@ -33,9 +36,16 @@ export default function SignupEditor() {
         ))}
       </div>
       <div className="tab-content">
-        {activeTab === 'Take Payments' && <TakePaymentsTab />}
+        {activeTab === 'Take Payments' && (
+          <TakePaymentsTab
+            paymentsEnabled={paymentsEnabled}
+            setPaymentsEnabled={setPaymentsEnabled}
+            chargeMode={chargeMode}
+            setChargeMode={setChargeMode}
+          />
+        )}
         {activeTab === 'Items' && (
-          <div className="placeholder-tab">Items tab — coming next</div>
+          <ItemsTab paymentsEnabled={paymentsEnabled} chargeMode={chargeMode} />
         )}
         {activeTab === 'Respondent Data' && (
           <div className="placeholder-tab">Respondent Data tab</div>
