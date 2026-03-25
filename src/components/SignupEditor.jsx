@@ -13,7 +13,33 @@ const TABS = [
 export default function SignupEditor() {
   const [activeTab, setActiveTab] = useState('Items')
   const [paymentsEnabled, setPaymentsEnabled] = useState(true)
-  const [chargeMode, setChargeMode] = useState('per-spot')
+  const [chargeMode, setChargeMode] = useState('per-household')
+
+  // Signup-level household pricing state (lifted so items can read it)
+  const [signupPricing, setSignupPricing] = useState({
+    pricingMode: 'per-spot',
+    price: '4',
+    maxPriceEnabled: true,
+    maxPrice: '12',
+    earlyBirdEnabled: false,
+    earlyBirdDate: '2026-06-01',
+    earlyBirdPrice: '5',
+    earlyBirdMaxPrice: '15',
+    latePricingEnabled: false,
+    lateDate: '2026-08-15',
+    latePrice: '4',
+    lateMaxPrice: '12',
+  })
+
+  // Per-spot time-based dates (lifted so items can read them)
+  const [spotTimePricing, setSpotTimePricing] = useState({
+    earlyBirdEnabled: false,
+    earlyBirdDate: '2026-06-01',
+    lateFeeEnabled: false,
+    lateFeeDate: '2026-08-15',
+  })
+
+  const navigateToPayments = () => setActiveTab('Take Payments')
 
   return (
     <div className="signup-editor">
@@ -42,10 +68,20 @@ export default function SignupEditor() {
             setPaymentsEnabled={setPaymentsEnabled}
             chargeMode={chargeMode}
             setChargeMode={setChargeMode}
+            signupPricing={signupPricing}
+            setSignupPricing={setSignupPricing}
+            spotTimePricing={spotTimePricing}
+            setSpotTimePricing={setSpotTimePricing}
           />
         )}
         {activeTab === 'Items' && (
-          <ItemsTab paymentsEnabled={paymentsEnabled} chargeMode={chargeMode} />
+          <ItemsTab
+            paymentsEnabled={paymentsEnabled}
+            chargeMode={chargeMode}
+            signupPricing={signupPricing}
+            spotTimePricing={spotTimePricing}
+            navigateToPayments={navigateToPayments}
+          />
         )}
         {activeTab === 'Respondent Data' && (
           <div className="placeholder-tab">Respondent Data tab</div>

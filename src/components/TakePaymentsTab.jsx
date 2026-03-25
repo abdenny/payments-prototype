@@ -64,34 +64,45 @@ function PricingRow({ icon, children, borderBottom = true }) {
   )
 }
 
-export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, chargeMode, setChargeMode }) {
+export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, chargeMode, setChargeMode, signupPricing, setSignupPricing, spotTimePricing, setSpotTimePricing }) {
   const [selectedFund, setSelectedFund] = useState('Signup Fund - Fish Fry')
 
-  // Signup-level pricing state
-  const [pricingMode, setPricingMode] = useState('per-spot') // per-spot or per-family
-  const [price, setPrice] = useState('4')
-  const [maxPriceEnabled, setMaxPriceEnabled] = useState(true)
-  const [maxPrice, setMaxPrice] = useState('12')
+  // Destructure signup-level pricing
+  const {
+    pricingMode, price, maxPriceEnabled, maxPrice,
+    earlyBirdEnabled, earlyBirdDate, earlyBirdPrice, earlyBirdMaxPrice,
+    latePricingEnabled, lateDate, latePrice, lateMaxPrice,
+  } = signupPricing
 
-  // Early bird
-  const [earlyBirdEnabled, setEarlyBirdEnabled] = useState(false)
-  const [earlyBirdDate, setEarlyBirdDate] = useState('2026-06-01')
-  const [earlyBirdPrice, setEarlyBirdPrice] = useState('5')
-  const [earlyBirdMaxPrice, setEarlyBirdMaxPrice] = useState('15')
+  const updatePricing = (updates) => setSignupPricing({ ...signupPricing, ...updates })
 
-  // Late pricing
-  const [latePricingEnabled, setLatePricingEnabled] = useState(false)
-  const [lateDate, setLateDate] = useState('2026-08-15')
-  const [latePrice, setLatePrice] = useState('4')
-  const [lateMaxPrice, setLateMaxPrice] = useState('12')
+  // Convenience setters
+  const setPricingMode = (v) => updatePricing({ pricingMode: v })
+  const setPrice = (v) => updatePricing({ price: v })
+  const setMaxPriceEnabled = (v) => updatePricing({ maxPriceEnabled: v })
+  const setMaxPrice = (v) => updatePricing({ maxPrice: v })
+  const setEarlyBirdEnabled = (v) => updatePricing({ earlyBirdEnabled: v })
+  const setEarlyBirdDate = (v) => updatePricing({ earlyBirdDate: v })
+  const setEarlyBirdPrice = (v) => updatePricing({ earlyBirdPrice: v })
+  const setEarlyBirdMaxPrice = (v) => updatePricing({ earlyBirdMaxPrice: v })
+  const setLatePricingEnabled = (v) => updatePricing({ latePricingEnabled: v })
+  const setLateDate = (v) => updatePricing({ lateDate: v })
+  const setLatePrice = (v) => updatePricing({ latePrice: v })
+  const setLateMaxPrice = (v) => updatePricing({ lateMaxPrice: v })
 
   // Per-spot options
   const [spotMaxPriceEnabled, setSpotMaxPriceEnabled] = useState(true)
   const [spotMaxPrice, setSpotMaxPrice] = useState('12')
-  const [spotEarlyBirdEnabled, setSpotEarlyBirdEnabled] = useState(false)
-  const [spotEarlyBirdDate, setSpotEarlyBirdDate] = useState('2026-06-01')
-  const [spotLateFeeEnabled, setSpotLateFeeEnabled] = useState(false)
-  const [spotLateFeeDate, setSpotLateFeeDate] = useState('2026-08-15')
+
+  const updateSpotTime = (updates) => setSpotTimePricing({ ...spotTimePricing, ...updates })
+  const spotEarlyBirdEnabled = spotTimePricing.earlyBirdEnabled
+  const spotEarlyBirdDate = spotTimePricing.earlyBirdDate
+  const spotLateFeeEnabled = spotTimePricing.lateFeeEnabled
+  const spotLateFeeDate = spotTimePricing.lateFeeDate
+  const setSpotEarlyBirdEnabled = (v) => updateSpotTime({ earlyBirdEnabled: v })
+  const setSpotEarlyBirdDate = (v) => updateSpotTime({ earlyBirdDate: v })
+  const setSpotLateFeeEnabled = (v) => updateSpotTime({ lateFeeEnabled: v })
+  const setSpotLateFeeDate = (v) => updateSpotTime({ lateFeeDate: v })
 
   // Bottom options
   const [suggestedDonation, setSuggestedDonation] = useState(false)
@@ -140,7 +151,7 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
                 <div className="charge-option-content">
                   <div className="charge-option-title-row">
                     <span className="charge-option-title">Charge per spot</span>
-                    <span className="pricing-badge">Item level pricing</span>
+
                   </div>
                   <span className="charge-option-desc">
                     This setting allows each Signup item carry an individual charge. You have the
@@ -252,7 +263,7 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
                 <div className="charge-option-content">
                   <div className="charge-option-title-row">
                     <span className="charge-option-title">Charge per household</span>
-                    <span className="pricing-badge">Signup Level Pricing</span>
+
                   </div>
                   <span className="charge-option-desc">
                     This setting allows you to either charge each household a fixed amount or create
