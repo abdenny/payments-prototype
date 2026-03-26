@@ -111,11 +111,6 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
   const spotMaxPriceRef = useRef(null)
   const householdMaxPriceRef = useRef(null)
 
-  // Time-based max per household toggles
-  const [earlyBirdMaxEnabled, setEarlyBirdMaxEnabled] = useState(false)
-  const [lateMaxEnabled, setLateMaxEnabled] = useState(false)
-  const earlyBirdMaxRef = useRef(null)
-  const lateMaxRef = useRef(null)
 
   const updateSpotTime = (updates) => setSpotTimePricing({ ...spotTimePricing, ...updates })
   const spotEarlyBirdEnabled = spotTimePricing.earlyBirdEnabled
@@ -382,30 +377,10 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
                           onChange={(e) => setEarlyBirdDate(e.target.value)}
                         />
                       </PricingRow>
-                      <PricingRow icon={<DollarIcon />} borderBottom={pricingMode === 'per-spot'}>
+                      <PricingRow icon={<DollarIcon />} borderBottom={false}>
                         <span className="pricing-label">Price per {pricingLabel}</span>
                         <PriceInput value={earlyBirdPrice} onChange={setEarlyBirdPrice} />
                       </PricingRow>
-                      {pricingMode === 'per-spot' && (
-                        <PricingRow icon={<FamilyIcon />} borderBottom={false}>
-                          <div className="max-price-header">
-                            <span className="pricing-label">
-                              Max per household across all items?
-                              <InfoTooltip text="Caps what a household pays in total across every item in this signup. Does not include per-item fees." />
-                            </span>
-                            <SmallCheckbox
-                              checked={earlyBirdMaxEnabled}
-                              onChange={(e) => {
-                                setEarlyBirdMaxEnabled(e.target.checked)
-                                if (e.target.checked) setTimeout(() => earlyBirdMaxRef.current?.focus(), 0)
-                              }}
-                            />
-                          </div>
-                          {earlyBirdMaxEnabled && (
-                            <PriceInput ref={earlyBirdMaxRef} value={earlyBirdMaxPrice} onChange={setEarlyBirdMaxPrice} />
-                          )}
-                        </PricingRow>
-                      )}
                     </div>
                   )}
 
@@ -431,30 +406,10 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
                           onChange={(e) => setLateDate(e.target.value)}
                         />
                       </PricingRow>
-                      <PricingRow icon={<DollarIcon />} borderBottom={pricingMode === 'per-spot'}>
+                      <PricingRow icon={<DollarIcon />} borderBottom={false}>
                         <span className="pricing-label">Price per {pricingLabel}</span>
                         <PriceInput value={latePrice} onChange={setLatePrice} />
                       </PricingRow>
-                      {pricingMode === 'per-spot' && (
-                        <PricingRow icon={<FamilyIcon />} borderBottom={false}>
-                          <div className="max-price-header">
-                            <span className="pricing-label">
-                              Max per household across all items?
-                              <InfoTooltip text="Caps what a household pays in total across every item in this signup. Does not include per-item fees." />
-                            </span>
-                            <SmallCheckbox
-                              checked={lateMaxEnabled}
-                              onChange={(e) => {
-                                setLateMaxEnabled(e.target.checked)
-                                if (e.target.checked) setTimeout(() => lateMaxRef.current?.focus(), 0)
-                              }}
-                            />
-                          </div>
-                          {lateMaxEnabled && (
-                            <PriceInput ref={lateMaxRef} value={lateMaxPrice} onChange={setLateMaxPrice} />
-                          )}
-                        </PricingRow>
-                      )}
                     </div>
                   )}
                 </PricingCard>

@@ -321,15 +321,9 @@ function PerHouseholdPricing() {
   const [earlyBirdEnabled, setEarlyBirdEnabled] = useState(false)
   const [earlyBirdDate, setEarlyBirdDate] = useState('2026-06-01')
   const [earlyBirdPrice, setEarlyBirdPrice] = useState('')
-  const [earlyBirdMaxEnabled, setEarlyBirdMaxEnabled] = useState(false)
-  const [earlyBirdMaxPrice, setEarlyBirdMaxPrice] = useState('')
-  const earlyBirdMaxRef = useRef(null)
   const [lateFeeEnabled, setLateFeeEnabled] = useState(false)
   const [lateFeeDate, setLateFeeDate] = useState('2026-08-15')
   const [latePrice, setLatePrice] = useState('')
-  const [lateMaxEnabled, setLateMaxEnabled] = useState(false)
-  const [lateMaxPrice, setLateMaxPrice] = useState('')
-  const lateMaxRef = useRef(null)
 
   const pricingLabel = pricingMode === 'per-spot' ? 'spot' : 'household'
 
@@ -423,20 +417,6 @@ function PerHouseholdPricing() {
                     <span className="create-time-label">Price per {pricingLabel}</span>
                     <div className="price-input-wrap"><span className="price-prefix">$</span><input type="text" className="price-input" placeholder="0" value={earlyBirdPrice} onChange={(e) => { const val = e.target.value; if (/^\d*\.?\d{0,2}$/.test(val) || val === '') setEarlyBirdPrice(val) }} /></div>
                   </div>
-                  {pricingMode === 'per-spot' && (
-                    <div className="create-time-detail-row create-time-max-row">
-                      <span className="icon-circle" style={{ width: 28, height: 28, minWidth: 28 }}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-                      </span>
-                      <div className="create-time-max-fields">
-                        <div className="create-time-max-header">
-                          <span className="create-time-label">Max per household across all items?<InfoTooltip text="Caps what a household pays in total across every item in this signup. Does not include per-item fees." /></span>
-                          <label className="small-checkbox-wrap"><input type="checkbox" className="small-checkbox" checked={earlyBirdMaxEnabled} onChange={(e) => { setEarlyBirdMaxEnabled(e.target.checked); if (e.target.checked) setTimeout(() => earlyBirdMaxRef.current?.focus(), 0) }} /></label>
-                        </div>
-                        {earlyBirdMaxEnabled && (<div className="price-input-wrap"><span className="price-prefix">$</span><input ref={earlyBirdMaxRef} type="text" className="price-input" placeholder="0" value={earlyBirdMaxPrice} onChange={(e) => { const val = e.target.value; if (/^\d*\.?\d{0,2}$/.test(val) || val === '') setEarlyBirdMaxPrice(val) }} /></div>)}
-                      </div>
-                    </div>
-                  )}
                 </div>
               )}
               {/* Late Fee */}
@@ -468,20 +448,6 @@ function PerHouseholdPricing() {
                     <span className="create-time-label">Price per {pricingLabel}</span>
                     <div className="price-input-wrap"><span className="price-prefix">$</span><input type="text" className="price-input" placeholder="0" value={latePrice} onChange={(e) => { const val = e.target.value; if (/^\d*\.?\d{0,2}$/.test(val) || val === '') setLatePrice(val) }} /></div>
                   </div>
-                  {pricingMode === 'per-spot' && (
-                    <div className="create-time-detail-row create-time-max-row">
-                      <span className="icon-circle" style={{ width: 28, height: 28, minWidth: 28 }}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-                      </span>
-                      <div className="create-time-max-fields">
-                        <div className="create-time-max-header">
-                          <span className="create-time-label">Max per household across all items?<InfoTooltip text="Caps what a household pays in total across every item in this signup. Does not include per-item fees." /></span>
-                          <label className="small-checkbox-wrap"><input type="checkbox" className="small-checkbox" checked={lateMaxEnabled} onChange={(e) => { setLateMaxEnabled(e.target.checked); if (e.target.checked) setTimeout(() => lateMaxRef.current?.focus(), 0) }} /></label>
-                        </div>
-                        {lateMaxEnabled && (<div className="price-input-wrap"><span className="price-prefix">$</span><input ref={lateMaxRef} type="text" className="price-input" placeholder="0" value={lateMaxPrice} onChange={(e) => { const val = e.target.value; if (/^\d*\.?\d{0,2}$/.test(val) || val === '') setLateMaxPrice(val) }} /></div>)}
-                      </div>
-                    </div>
-                  )}
                 </div>
               )}
             </div>
