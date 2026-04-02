@@ -377,10 +377,16 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
                           onChange={(e) => setEarlyBirdDate(e.target.value)}
                         />
                       </PricingRow>
-                      <PricingRow icon={<DollarIcon />} borderBottom={false}>
+                      <PricingRow icon={<DollarIcon />} borderBottom={pricingMode === 'per-spot' && maxPriceEnabled}>
                         <span className="pricing-label">Price per {pricingLabel}</span>
                         <PriceInput value={earlyBirdPrice} onChange={setEarlyBirdPrice} />
                       </PricingRow>
+                      {pricingMode === 'per-spot' && maxPriceEnabled && (
+                        <PricingRow icon={<FamilyIcon />} borderBottom={false}>
+                          <span className="pricing-label">Max per household</span>
+                          <PriceInput value={earlyBirdMaxPrice} onChange={setEarlyBirdMaxPrice} />
+                        </PricingRow>
+                      )}
                     </div>
                   )}
 
@@ -406,10 +412,16 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
                           onChange={(e) => setLateDate(e.target.value)}
                         />
                       </PricingRow>
-                      <PricingRow icon={<DollarIcon />} borderBottom={false}>
+                      <PricingRow icon={<DollarIcon />} borderBottom={pricingMode === 'per-spot' && maxPriceEnabled}>
                         <span className="pricing-label">Price per {pricingLabel}</span>
                         <PriceInput value={latePrice} onChange={setLatePrice} />
                       </PricingRow>
+                      {pricingMode === 'per-spot' && maxPriceEnabled && (
+                        <PricingRow icon={<FamilyIcon />} borderBottom={false}>
+                          <span className="pricing-label">Max per household</span>
+                          <PriceInput value={lateMaxPrice} onChange={setLateMaxPrice} />
+                        </PricingRow>
+                      )}
                     </div>
                   )}
                 </PricingCard>

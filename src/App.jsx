@@ -63,8 +63,8 @@ const CONFIGS = {
     activeTab: 'Take Payments',
     signupPricing: {
       pricingMode: 'per-spot', price: '4', maxPriceEnabled: true, maxPrice: '12',
-      earlyBirdEnabled: true, earlyBirdDate: '2026-06-01', earlyBirdPrice: '3', earlyBirdMaxPrice: '',
-      latePricingEnabled: true, lateDate: '2026-08-15', latePrice: '6', lateMaxPrice: '',
+      earlyBirdEnabled: true, earlyBirdDate: '2026-06-01', earlyBirdPrice: '3', earlyBirdMaxPrice: '10',
+      latePricingEnabled: true, lateDate: '2026-08-15', latePrice: '6', lateMaxPrice: '18',
     },
     spotTimePricing: {
       earlyBirdEnabled: false, earlyBirdDate: '2026-06-01', lateFeeEnabled: false, lateFeeDate: '2026-08-15',
