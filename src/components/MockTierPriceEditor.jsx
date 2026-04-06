@@ -3,12 +3,39 @@ import './MockTierPriceEditor.css'
 
 let nextTierId = 100
 
+function TierAddButton({ onClick, disabled }) {
+  return (
+    <div className="tier-add-row">
+      <button className="tier-add-btn" onClick={onClick} disabled={disabled} type="button">
+        <span className="tier-add-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5z" />
+            <path d="M2 17l10 5 10-5" />
+            <path d="M2 12l10 5 10-5" />
+          </svg>
+        </span>
+        Add a Tier
+      </button>
+    </div>
+  )
+}
+
+function TrashIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="3 6 5 6 21 6" />
+      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+    </svg>
+  )
+}
+
 export default function MockTierPriceEditor({ tierData, setTierData, entity = 'spot', disabled = false }) {
   const maxTier = tierData?.find(t => t.numberOfSlots === null) || { numberOfSlots: null, amount: '', id: 'max' }
   const nonMaxTiers = tierData?.filter(t => t.numberOfSlots !== null) || []
 
   const updateMaxAmount = (val) => {
     if (disabled) return
+    if (val !== '' && !/^\d*\.?\d{0,2}$/.test(val)) return
     setTierData(tierData.map(t => t.numberOfSlots === null ? { ...t, amount: val } : t))
   }
 
@@ -56,75 +83,66 @@ export default function MockTierPriceEditor({ tierData, setTierData, entity = 's
   return (
     <div className="mock-tier-editor">
       <div className="tier-list">
-          <div className="tier-add-row">
-            <button className="tier-add-btn" onClick={() => addTier(0)} disabled={disabled || nonMaxTiers.length >= 3} type="button">
-              📊 Add a Tier
-            </button>
-          </div>
+        <TierAddButton onClick={() => addTier(0)} disabled={disabled || nonMaxTiers.length >= 3} />
 
-          {nonMaxTiers.map((tier, i) => (
-            <React.Fragment key={tier.id}>
-              <div className="tier-row">
-                <div className="tier-slots">
+        {nonMaxTiers.map((tier, i) => (
+          <React.Fragment key={tier.id}>
+            <div className="tier-row">
+              <div className="tier-slots">
+                <div className="tier-slots-number">
                   <span className="tier-up-to">Up to</span>
                   <button className="tier-slot-btn" onClick={() => updateTierSlots(tier.id, -1)} disabled={disabled} type="button">−</button>
                   <span className="tier-slot-value">{tier.numberOfSlots}</span>
                   <button className="tier-slot-btn" onClick={() => updateTierSlots(tier.id, 1)} disabled={disabled} type="button">+</button>
                   <span className="tier-spots-label">{entity}s</span>
                 </div>
-                <div className="tier-price">
-                  <span className="tier-price-label">Total Price</span>
-                  <div className="price-input-wrap">
-                    <span className="price-prefix">$</span>
-                    <input
-                      type="text"
-                      className="price-input"
-                      placeholder="0.00"
-                      value={tier.amount}
-                      onChange={(e) => updateTierAmount(tier.id, e.target.value)}
-                      disabled={disabled}
-                    />
-                  </div>
-                </div>
-                <button className="tier-delete-btn" onClick={() => removeTier(tier.id)} disabled={disabled} type="button">
-                  🗑
-                </button>
               </div>
-
-              <div className="tier-add-row">
-                <button className="tier-add-btn" onClick={() => addTier(i + 1)} disabled={disabled || nonMaxTiers.length >= 3} type="button">
-                  📊 Add a Tier
-                </button>
-              </div>
-            </React.Fragment>
-          ))}
-
-          {/* Max tier (always shown) */}
-          <div className="tier-row tier-max-row">
-            <div className="tier-slots">
-              <span className="tier-max-value">{lastNonMaxSlots + 1}+</span>
-              <span className="tier-spots-label">{entity}s</span>
-            </div>
-            <div className="tier-price">
-              <span className="tier-price-label">Total Price</span>
-              <div className="price-input-wrap">
-                <span className="price-prefix">$</span>
+              <div className="tier-price">
+                <span className="tier-price-label">Total Price</span>
                 <input
                   type="text"
-                  className="price-input"
-                  placeholder="0.00"
-                  value={maxTier.amount}
+                  className="tier-price-input"
+                  placeholder="$0.00"
+                  value={tier.amount ? `$${tier.amount}` : ''}
                   onChange={(e) => {
-                    const val = e.target.value
-                    if (/^\d*\.?\d{0,2}$/.test(val) || val === '') updateMaxAmount(val)
+                    const raw = e.target.value.replace(/^\$/, '')
+                    updateTierAmount(tier.id, raw)
                   }}
                   disabled={disabled}
                 />
               </div>
+              <button className="tier-delete-btn" onClick={() => removeTier(tier.id)} disabled={disabled} type="button">
+                <TrashIcon />
+              </button>
             </div>
-            <div className="tier-delete-placeholder" />
+
+            <TierAddButton onClick={() => addTier(i + 1)} disabled={disabled || nonMaxTiers.length >= 3} />
+          </React.Fragment>
+        ))}
+
+        {/* Max tier (always shown) */}
+        <div className="tier-row tier-max-row">
+          <div className="tier-max-slots">
+            <span className="tier-max-value">{lastNonMaxSlots + 1}+</span>
+            <span className="tier-spots-label">{entity}s</span>
           </div>
+          <div className="tier-price">
+            <span className="tier-price-label">Total Price</span>
+            <input
+              type="text"
+              className="tier-price-input"
+              placeholder="$0.00"
+              value={maxTier.amount ? `$${maxTier.amount}` : ''}
+              onChange={(e) => {
+                const raw = e.target.value.replace(/^\$/, '')
+                updateMaxAmount(raw)
+              }}
+              disabled={disabled}
+            />
+          </div>
+          <div className="tier-delete-placeholder" />
         </div>
+      </div>
     </div>
   )
 }

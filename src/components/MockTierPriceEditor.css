@@ -2,186 +2,209 @@
   margin-top: 0.25rem;
 }
 
-.tier-toggle-bar {
-  display: flex;
-  border: 1px solid #d0d5dd;
-  border-radius: 8px;
-  overflow: hidden;
-  margin-bottom: 1rem;
-}
-
-.tier-toggle-btn {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 10px 12px;
-  border: none;
-  background: white;
-  font-size: 14px;
-  font-weight: 500;
-  color: #667;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-}
-
-.tier-toggle-btn.active {
-  background: linear-gradient(135deg, #3b82c4, #2a6fa8);
-  color: white;
-}
-
-.tier-toggle-btn:not(.active):hover {
-  background: #f5f7fa;
-}
-
-.tier-toggle-icon {
-  font-size: 16px;
-}
-
-/* Single price mode */
-.tier-single-price {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 4px 0;
-}
-
-.tier-single-label {
-  font-size: 14px;
-  font-weight: 500;
-  color: #333;
-}
-
-/* Tiered pricing mode */
+/* ── Tier list ── */
 .tier-list {
-  /* nothing special */
+  padding: 0 4px;
 }
 
-.tier-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 0;
-  border-bottom: 1px solid #e8ecef;
-}
-
-.tier-max-row {
-  border-bottom: none;
-}
-
-.tier-slots {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  min-width: 160px;
-}
-
-.tier-up-to {
-  font-size: 12px;
-  color: #667;
-  text-transform: uppercase;
-  font-weight: 600;
-  letter-spacing: 0.03em;
-}
-
-.tier-slot-btn {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 1px solid #ccc;
-  background: #f5f7fa;
-  font-size: 16px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #667;
-}
-
-.tier-slot-btn:hover {
-  background: #e8ecef;
-}
-
-.tier-slot-value {
-  font-size: 24px;
-  font-weight: 600;
-  color: #333;
-  min-width: 24px;
-  text-align: center;
-}
-
-.tier-max-value {
-  font-size: 24px;
-  font-weight: 600;
-  color: #3b82c4;
-  min-width: 40px;
-}
-
-.tier-spots-label {
-  font-size: 16px;
-  color: #667;
-}
-
-.tier-price {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.tier-price-label {
-  font-size: 11px;
-  color: #889;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.tier-price .price-input-wrap {
-  width: 120px;
-}
-
-.tier-delete-btn {
-  background: none;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
-  opacity: 0.4;
-  padding: 4px;
-  transition: opacity 0.15s;
-}
-
-.tier-delete-btn:hover {
-  opacity: 1;
-}
-
-.tier-delete-placeholder {
-  width: 30px;
-}
-
+/* ── Add a Tier button (centered on divider line) ── */
 .tier-add-row {
   display: flex;
   justify-content: center;
-  padding: 4px 0;
+  position: relative;
+  padding: 6px 0;
+}
+
+.tier-add-row::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #e0e4ea;
 }
 
 .tier-add-btn {
-  background: none;
-  border: none;
+  position: relative;
+  background: #fff;
+  border: 1px solid #d0d5dd;
   font-size: 12px;
-  color: #889;
+  font-weight: 500;
+  color: #667;
   cursor: pointer;
-  padding: 4px 12px;
-  border-radius: 12px;
-  transition: background 0.15s, color 0.15s;
+  padding: 4px 14px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: background 0.15s, border-color 0.15s;
+  z-index: 1;
 }
 
 .tier-add-btn:hover {
-  background: #f0f2f5;
-  color: #555;
+  background: #f5f7fa;
+  border-color: #b0b8c8;
 }
 
 .tier-add-btn:disabled {
   opacity: 0.3;
   cursor: not-allowed;
+}
+
+.tier-add-icon {
+  font-size: 14px;
+  opacity: 0.6;
+}
+
+/* ── Tier row ── */
+.tier-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 4px;
+}
+
+.tier-max-row {
+  /* no bottom border on last row */
+}
+
+/* ── Slots section (left side) ── */
+.tier-slots {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 170px;
+}
+
+.tier-up-to {
+  font-size: 11px;
+  color: #3d5a80;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  position: absolute;
+  top: -2px;
+  left: 0;
+}
+
+.tier-slots-number {
+  position: relative;
+  padding-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tier-slot-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: #c0c8d4;
+  font-size: 18px;
+  font-weight: 400;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.tier-slot-btn:hover {
+  background: #9aa4b2;
+}
+
+.tier-slot-value {
+  font-size: 32px;
+  font-weight: 600;
+  color: #333;
+  min-width: 20px;
+  text-align: center;
+  line-height: 1;
+}
+
+.tier-spots-label {
+  font-size: 18px;
+  font-weight: 400;
+  color: #556;
+  margin-left: 2px;
+}
+
+/* Max tier (3+ spots) */
+.tier-max-slots {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 170px;
+}
+
+.tier-max-value {
+  font-size: 32px;
+  font-weight: 600;
+  color: #3d5a80;
+  line-height: 1;
+}
+
+/* ── Price input (outlined with floating label) ── */
+.tier-price {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.tier-price-label {
+  position: absolute;
+  top: -8px;
+  left: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #889;
+  background: #fff;
+  padding: 0 4px;
+  z-index: 1;
+}
+
+.tier-price-input {
+  width: 110px;
+  font-size: 18px;
+  font-weight: 400;
+  padding: 10px 14px;
+  border: 1px solid #c0c8d4;
+  border-radius: 8px;
+  color: #333;
+  outline: none;
+  background: #fff;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+}
+
+.tier-price-input:focus {
+  border-color: #3d5a80;
+}
+
+.tier-price-input::placeholder {
+  color: #bbb;
+}
+
+/* ── Delete button ── */
+.tier-delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color: #8899aa;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s;
+  flex-shrink: 0;
+}
+
+.tier-delete-btn:hover {
+  color: #c0392b;
+}
+
+.tier-delete-placeholder {
+  width: 28px;
 }
