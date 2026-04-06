@@ -175,140 +175,55 @@ function PerSpotPricing() {
   const [maxEnabled, setMaxEnabled] = useState(false)
   const [maxPrice, setMaxPrice] = useState('')
   const maxPriceRef = useRef(null)
-  const [showAdvanced, setShowAdvanced] = useState(false)
-  const [earlyBirdEnabled, setEarlyBirdEnabled] = useState(false)
-  const [earlyBirdDate, setEarlyBirdDate] = useState('2026-06-01')
-  const [lateFeeEnabled, setLateFeeEnabled] = useState(false)
-  const [lateFeeDate, setLateFeeDate] = useState('2026-08-15')
 
   return (
-    <>
-      <div className="create-pricing-card">
-        <div className="create-pricing-row">
-          <span className="icon-circle" style={{ width: 36, height: 36, minWidth: 36 }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
-              <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
-            </svg>
-          </span>
-          <div className="create-pricing-fields">
-            <div className="create-pricing-header">
-              <span className="create-pricing-label">
-                Max per household across all items?
-                <InfoTooltip text="Caps what a household pays in total across every item in this signup. Does not include per-item fees." />
-              </span>
-              <label className="small-checkbox-wrap">
-                <input
-                  type="checkbox"
-                  className="small-checkbox"
-                  checked={maxEnabled}
-                  onChange={(e) => {
-                    setMaxEnabled(e.target.checked)
-                    if (e.target.checked) setTimeout(() => maxPriceRef.current?.focus(), 0)
-                  }}
-                />
-              </label>
-            </div>
-            {maxEnabled && (
-              <div className="price-input-wrap">
-                <span className="price-prefix">$</span>
-                <input
-                  ref={maxPriceRef}
-                  type="text"
-                  className="price-input"
-                  placeholder="0"
-                  value={maxPrice}
-                  onChange={(e) => {
-                    const val = e.target.value
-                    if (/^\d*\.?\d{0,2}$/.test(val) || val === '') setMaxPrice(val)
-                  }}
-                />
-              </div>
-            )}
+    <div className="create-pricing-card">
+      <div className="create-pricing-row">
+        <span className="icon-circle" style={{ width: 36, height: 36, minWidth: 36 }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+            <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+          </svg>
+        </span>
+        <div className="create-pricing-fields">
+          <div className="create-pricing-header">
+            <span className="create-pricing-label">
+              Max per household across all items?
+              <InfoTooltip text="Caps what a household pays in total across every item in this signup. Does not include per-item fees." />
+            </span>
+            <label className="small-checkbox-wrap">
+              <input
+                type="checkbox"
+                className="small-checkbox"
+                checked={maxEnabled}
+                onChange={(e) => {
+                  setMaxEnabled(e.target.checked)
+                  if (e.target.checked) setTimeout(() => maxPriceRef.current?.focus(), 0)
+                }}
+              />
+            </label>
           </div>
-        </div>
-        <div className="create-spot-note">
-          You'll set individual item prices after creating the signup.
+          {maxEnabled && (
+            <div className="price-input-wrap">
+              <span className="price-prefix">$</span>
+              <input
+                ref={maxPriceRef}
+                type="text"
+                className="price-input"
+                placeholder="0"
+                value={maxPrice}
+                onChange={(e) => {
+                  const val = e.target.value
+                  if (/^\d*\.?\d{0,2}$/.test(val) || val === '') setMaxPrice(val)
+                }}
+              />
+            </div>
+          )}
         </div>
       </div>
-
-      {/* Advanced: Time-based pricing */}
-      <div className="create-advanced-section">
-        <button
-          className={`create-advanced-toggle ${showAdvanced ? 'open' : ''}`}
-          onClick={() => setShowAdvanced(!showAdvanced)}
-        >
-          <span className="create-advanced-arrow">{showAdvanced ? '▾' : '▸'}</span>
-          Advanced: Time-based pricing
-        </button>
-        {showAdvanced && (
-          <div className="create-advanced-content">
-            <div className="create-time-card">
-              <div className="create-time-toggle-row">
-                <span className="icon-circle" style={{ width: 32, height: 32, minWidth: 32 }}>
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="10" />
-                    <polyline points="12 6 12 12 16 14" />
-                  </svg>
-                </span>
-                <div className="create-time-info">
-                  <span className="create-time-title">Early Bird</span>
-                  <span className="create-time-desc">Reduced rate for early registration</span>
-                </div>
-                <label className="small-checkbox-wrap">
-                  <input type="checkbox" className="small-checkbox" checked={earlyBirdEnabled} onChange={(e) => setEarlyBirdEnabled(e.target.checked)} />
-                </label>
-              </div>
-              {earlyBirdEnabled && (
-                <div className="create-time-detail">
-                  <div className="create-time-detail-row">
-                    <span className="icon-circle" style={{ width: 28, height: 28, minWidth: 28 }}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
-                      </svg>
-                    </span>
-                    <span className="create-time-label">Discount ends</span>
-                    <input type="date" className="date-input" value={earlyBirdDate} onChange={(e) => setEarlyBirdDate(e.target.value)} />
-                  </div>
-                  <div className="create-time-spot-note">
-                    Early bird prices will be set on each item after creation.
-                  </div>
-                </div>
-              )}
-              <div className="create-time-toggle-row">
-                <span className="icon-circle" style={{ width: 32, height: 32, minWidth: 32 }}>
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M5 22h14M5 2h14M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2" />
-                  </svg>
-                </span>
-                <div className="create-time-info">
-                  <span className="create-time-title">Late Fee</span>
-                  <span className="create-time-desc">Higher rate for late registration</span>
-                </div>
-                <label className="small-checkbox-wrap">
-                  <input type="checkbox" className="small-checkbox" checked={lateFeeEnabled} onChange={(e) => setLateFeeEnabled(e.target.checked)} />
-                </label>
-              </div>
-              {lateFeeEnabled && (
-                <div className="create-time-detail">
-                  <div className="create-time-detail-row">
-                    <span className="icon-circle" style={{ width: 28, height: 28, minWidth: 28 }}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
-                      </svg>
-                    </span>
-                    <span className="create-time-label">Late fee starts</span>
-                    <input type="date" className="date-input" value={lateFeeDate} onChange={(e) => setLateFeeDate(e.target.value)} />
-                  </div>
-                  <div className="create-time-spot-note">
-                    Late fee prices will be set on each item after creation.
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
+      <div className="create-spot-note">
+        You'll set individual item prices and discounts after creating the signup.
       </div>
-    </>
+    </div>
   )
 }
 
