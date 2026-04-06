@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react'
+import MockTierPriceEditor from './MockTierPriceEditor'
 import './TakePaymentsTab.css'
 
 const FUND_OPTIONS = [
@@ -126,6 +127,12 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
   const [suggestedDonation, setSuggestedDonation] = useState(false)
   const [requirePayments, setRequirePayments] = useState(false)
 
+  // Tiered pricing (per-household)
+  const [useTieredPricing, setUseTieredPricing] = useState(false)
+  const [householdTierData, setHouseholdTierData] = useState([
+    { numberOfSlots: null, amount: '5.00', id: 'max' }
+  ])
+
   const pricingLabel = pricingMode === 'per-spot' ? 'spot' : 'household'
 
   return (
@@ -155,10 +162,10 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
             </select>
           </div>
 
-          {/* Charge per spot */}
+          {/* Charge mode selection — three radio cards */}
           <div className="charge-options">
             <div className="charge-option-group">
-              <label className="charge-option">
+              <label className={`charge-option charge-card ${chargeMode === 'per-spot' ? 'charge-card-selected' : ''}`}>
                 <input
                   type="radio"
                   name="chargeMode"
@@ -168,10 +175,10 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
                 />
                 <div className="charge-option-content">
                   <div className="charge-option-title-row">
-                    <span className="charge-option-title">Charge per spot</span>
+                    <span className="charge-option-title">Per spot</span>
                   </div>
                   <span className="charge-option-desc">
-                    Set prices on each item's Take Payments tab.
+                    Same price for each spot someone signs up for.
                   </span>
                 </div>
               </label>
@@ -273,9 +280,9 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
               )}
             </div>
 
-            {/* Charge per household */}
+            {/* Per household */}
             <div className="charge-option-group">
-              <label className="charge-option">
+              <label className={`charge-option charge-card ${chargeMode === 'per-household' ? 'charge-card-selected' : ''}`}>
                 <input
                   type="radio"
                   name="chargeMode"
@@ -285,10 +292,10 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
                 />
                 <div className="charge-option-content">
                   <div className="charge-option-title-row">
-                    <span className="charge-option-title">Charge per household</span>
+                    <span className="charge-option-title">Per household</span>
                   </div>
                   <span className="charge-option-desc">
-                    One price set here, applied to all items.
+                    One price per household, regardless of how many sign up.
                   </span>
                 </div>
               </label>
@@ -298,28 +305,45 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
           {/* Signup Level Pricing — only when per-household is selected */}
           {chargeMode === 'per-household' && (
             <div className="signup-level-pricing">
+              {/* Three-way pricing mode toggle */}
+              <div className="household-mode-toggle">
+                <button
+                  className={`household-mode-btn ${pricingMode === 'per-spot' ? 'active' : ''}`}
+                  onClick={() => setPricingMode('per-spot')}
+                  type="button"
+                >
+                  Per Spot
+                </button>
+                <button
+                  className={`household-mode-btn ${pricingMode === 'per-household' ? 'active' : ''}`}
+                  onClick={() => setPricingMode('per-household')}
+                  type="button"
+                >
+                  Per Household
+                </button>
+                <button
+                  className={`household-mode-btn ${pricingMode === 'tiered' ? 'active' : ''}`}
+                  onClick={() => setPricingMode('tiered')}
+                  type="button"
+                >
+                  Tiered
+                </button>
+              </div>
+
+              {pricingMode === 'tiered' ? (
+                <MockTierPriceEditor
+                  tierData={householdTierData}
+                  setTierData={setHouseholdTierData}
+                  entity="spot"
+                />
+              ) : (
+              <>
               {/* Main price card */}
               <PricingCard>
                 <div className="pricing-row no-border">
                   <IconCircle icon={<DollarIcon />} />
                   <div className="pricing-row-content">
-                    <div className="price-header-row">
-                      <span className="pricing-label">Price per {pricingLabel}</span>
-                      <div className="pricing-toggle">
-                        <button
-                          className={`toggle-btn ${pricingMode === 'per-spot' ? 'active' : ''}`}
-                          onClick={() => setPricingMode('per-spot')}
-                        >
-                          Per Spot
-                        </button>
-                        <button
-                          className={`toggle-btn ${pricingMode === 'per-household' ? 'active' : ''}`}
-                          onClick={() => setPricingMode('per-household')}
-                        >
-                          Per Household
-                        </button>
-                      </div>
-                    </div>
+                    <span className="pricing-label">Price per {pricingLabel}</span>
                     <PriceInput value={price} onChange={setPrice} />
                   </div>
                 </div>
@@ -426,6 +450,8 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
                   )}
                 </PricingCard>
               </div>
+              </>
+              )}
             </div>
           )}
 

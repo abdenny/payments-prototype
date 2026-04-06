@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react'
+import MockTierPriceEditor from './MockTierPriceEditor'
 import './CreateSignupFlow.css'
 
 const STEPS = [
@@ -311,8 +312,7 @@ function PerSpotPricing() {
   )
 }
 
-function PerHouseholdPricing() {
-  const [pricingMode, setPricingMode] = useState('per-spot')
+function PerHouseholdPricing({ pricingMode = 'per-spot' }) {
   const [price, setPrice] = useState('')
   const [maxEnabled, setMaxEnabled] = useState(false)
   const [maxPrice, setMaxPrice] = useState('')
@@ -342,10 +342,6 @@ function PerHouseholdPricing() {
           <div className="create-pricing-fields">
             <div className="create-pricing-header">
               <span className="create-pricing-label">Price per {pricingLabel}</span>
-              <div className="pricing-toggle">
-                <button className={`toggle-btn ${pricingMode === 'per-spot' ? 'active' : ''}`} onClick={() => setPricingMode('per-spot')}>Per Spot</button>
-                <button className={`toggle-btn ${pricingMode === 'per-household' ? 'active' : ''}`} onClick={() => setPricingMode('per-household')}>Per Household</button>
-              </div>
             </div>
             <div className="price-input-wrap">
               <span className="price-prefix">$</span>
@@ -478,8 +474,24 @@ function PerHouseholdPricing() {
   )
 }
 
+function CreateTieredPricing() {
+  const [tierData, setTierData] = useState([
+    { numberOfSlots: 2, amount: '', id: 1 },
+    { numberOfSlots: null, amount: '', id: 'max' },
+  ])
+
+  return (
+    <MockTierPriceEditor
+      tierData={tierData}
+      setTierData={setTierData}
+      entity="spot"
+    />
+  )
+}
+
 function StepPricing({ isFree, isDonation, onBack }) {
   const [chargeMode, setChargeMode] = useState('per-spot')
+  const [createPricingMode, setCreatePricingMode] = useState('per-spot')
 
   if (isFree) {
     return (
@@ -516,8 +528,8 @@ function StepPricing({ isFree, isDonation, onBack }) {
           <label className={`payment-choice ${chargeMode === 'per-spot' ? 'selected' : ''}`}>
             <input type="radio" name="createChargeMode" checked={chargeMode === 'per-spot'} onChange={() => setChargeMode('per-spot')} />
             <div className="payment-choice-content">
-              <span className="payment-choice-title">Charge per spot</span>
-              <span className="payment-choice-desc">Set prices on each item after creation.</span>
+              <span className="payment-choice-title">Per spot</span>
+              <span className="payment-choice-desc">Same price for each spot someone signs up for.</span>
             </div>
           </label>
           {chargeMode === 'per-spot' && (
@@ -531,13 +543,40 @@ function StepPricing({ isFree, isDonation, onBack }) {
           <label className={`payment-choice ${chargeMode === 'per-household' ? 'selected' : ''}`}>
             <input type="radio" name="createChargeMode" checked={chargeMode === 'per-household'} onChange={() => setChargeMode('per-household')} />
             <div className="payment-choice-content">
-              <span className="payment-choice-title">Charge per household</span>
-              <span className="payment-choice-desc">One price set here, applied to all items.</span>
+              <span className="payment-choice-title">Per household</span>
+              <span className="payment-choice-desc">One price per household, regardless of how many sign up.</span>
             </div>
           </label>
           {chargeMode === 'per-household' && (
             <div className="create-inline-pricing">
-              <PerHouseholdPricing />
+              <div className="household-mode-toggle" style={{ marginBottom: 12 }}>
+                <button
+                  className={`household-mode-btn ${createPricingMode === 'per-spot' ? 'active' : ''}`}
+                  onClick={() => setCreatePricingMode('per-spot')}
+                  type="button"
+                >
+                  Per Spot
+                </button>
+                <button
+                  className={`household-mode-btn ${createPricingMode === 'per-household' ? 'active' : ''}`}
+                  onClick={() => setCreatePricingMode('per-household')}
+                  type="button"
+                >
+                  Per Household
+                </button>
+                <button
+                  className={`household-mode-btn ${createPricingMode === 'tiered' ? 'active' : ''}`}
+                  onClick={() => setCreatePricingMode('tiered')}
+                  type="button"
+                >
+                  Tiered
+                </button>
+              </div>
+              {createPricingMode === 'tiered' ? (
+                <CreateTieredPricing />
+              ) : (
+                <PerHouseholdPricing pricingMode={createPricingMode} />
+              )}
             </div>
           )}
         </div>

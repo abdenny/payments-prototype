@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react'
+import MockTierPriceEditor from './MockTierPriceEditor'
 import './ItemsTab.css'
 
 let nextId = 2
@@ -142,6 +143,10 @@ function ItemTakePaymentsSubTab({ chargeMode, signupPricing, spotTimePricing, na
   const [latePrice, setLatePrice] = useState('')
   const [additionalFees, setAdditionalFees] = useState([])
   const newFeeRef = useRef(null)
+  const [useTieredPricing, setUseTieredPricing] = useState(false)
+  const [itemTierData, setItemTierData] = useState([
+    { numberOfSlots: null, amount: '4.00', id: 'max' }
+  ])
 
   const isHouseholdMode = chargeMode === 'per-household'
 
@@ -284,6 +289,19 @@ function ItemTakePaymentsSubTab({ chargeMode, signupPricing, spotTimePricing, na
           ) : (
             /* ── Editable pricing (per-spot mode) ── */
             <>
+              {useTieredPricing ? (
+                <div style={{ marginBottom: 12 }}>
+                  <MockTierPriceEditor
+                    tierData={itemTierData}
+                    setTierData={setItemTierData}
+                    entity="spot"
+                  />
+                  <button className="inherited-link" onClick={() => setUseTieredPricing(false)} style={{ marginTop: 8, display: 'block' }}>
+                    Switch to standard pricing &rarr;
+                  </button>
+                </div>
+              ) : (
+              <>
               {/* Per-spot info banner */}
               <div className="spot-info-banner">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -389,6 +407,10 @@ function ItemTakePaymentsSubTab({ chargeMode, signupPricing, spotTimePricing, na
                     </div>
                   )}
                 </div>
+
+                <button className="inherited-link" onClick={() => setUseTieredPricing(true)} style={{ marginTop: 4, marginBottom: 8, display: 'block' }}>
+                  Use tiered pricing instead &rarr;
+                </button>
 
                 {/* Time-based pricing inputs (per-spot mode) */}
                 {hasSpotTimePricing && (
@@ -507,7 +529,9 @@ function ItemTakePaymentsSubTab({ chargeMode, signupPricing, spotTimePricing, na
                   </div>
                 )}
               </div>
-            </>
+              </>
+              )}
+</>
           )}
 
           {/* Additional Fees — always editable */}

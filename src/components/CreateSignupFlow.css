@@ -485,3 +485,32 @@
   font-style: italic;
   background: #fff;
 }
+
+/* ── Household mode sub-toggle (Standard / Tiered) ── */
+.household-mode-toggle {
+  display: flex;
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.household-mode-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  background: white;
+  font-size: 13px;
+  font-weight: 500;
+  color: #667;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.household-mode-btn.active {
+  background: #3d5a80;
+  color: white;
+}
+
+.household-mode-btn:not(.active):hover {
+  background: #f5f7fa;
+}
