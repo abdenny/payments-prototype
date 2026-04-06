@@ -129,6 +129,8 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
 
   // Tiered pricing (per-household)
   const [useTieredPricing, setUseTieredPricing] = useState(false)
+  const [discountsOpen, setDiscountsOpen] = useState(false)
+  const [spotDiscountsOpen, setSpotDiscountsOpen] = useState(false)
   const [householdTierData, setHouseholdTierData] = useState([
     { numberOfSlots: null, amount: '5.00', id: 'max' }
   ])
@@ -210,72 +212,79 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
                     </div>
                   </PricingCard>
 
-                  {/* Time-Based Pricing */}
-                  <div className="time-based-section">
-                    <div className="section-header">
-                      <span className="section-header-text">TIME-BASED PRICING</span>
-                    </div>
-                    <p className="time-based-desc">
-                      Dates set here. Prices set on each item.
-                    </p>
-                    <PricingCard>
-                      <div className="pricing-toggle-row">
-                        <IconCircle icon={<ClockIcon />} />
-                        <div className="pricing-toggle-info">
-                          <span className="pricing-toggle-title">Early Bird</span>
-                        </div>
-                        <SmallCheckbox
-                          checked={spotEarlyBirdEnabled}
-                          onChange={(e) => setSpotEarlyBirdEnabled(e.target.checked)}
-                        />
-                      </div>
-
-                      {spotEarlyBirdEnabled && (
-                        <div className="inline-pricing-detail">
-                          <PricingRow icon={<CalendarIcon />} borderBottom={false}>
-                            <span className="pricing-label">Discount ends</span>
-                            <input
-                              type="date"
-                              className="date-input"
-                              value={spotEarlyBirdDate}
-                              onChange={(e) => setSpotEarlyBirdDate(e.target.value)}
-                            />
-                          </PricingRow>
-                        </div>
+                  {/* Discounts & Late Fees — collapsible, matching the per-household style */}
+                  <div className="discounts-section">
+                    <button className="discounts-toggle" onClick={() => setSpotDiscountsOpen(!spotDiscountsOpen)} type="button">
+                      <span className="discounts-arrow">{spotDiscountsOpen ? '▾' : '▸'}</span>
+                      Discounts & Late Fees
+                      {(spotEarlyBirdEnabled || spotLateFeeEnabled) && (
+                        <span className="discounts-badge">{(spotEarlyBirdEnabled ? 1 : 0) + (spotLateFeeEnabled ? 1 : 0)} active</span>
                       )}
+                    </button>
 
-                      <div className={`pricing-toggle-row ${spotLateFeeEnabled ? '' : 'no-border'}`}>
-                        <IconCircle icon={<HourglassIcon />} />
-                        <div className="pricing-toggle-info">
-                          <span className="pricing-toggle-title">Late Fee</span>
-                        </div>
-                        <SmallCheckbox
-                          checked={spotLateFeeEnabled}
-                          onChange={(e) => setSpotLateFeeEnabled(e.target.checked)}
-                        />
-                      </div>
-
-                      {spotLateFeeEnabled && (
-                        <div className="inline-pricing-detail">
-                          <PricingRow icon={<CalendarIcon />} borderBottom={false}>
-                            <span className="pricing-label">Late fee starts</span>
-                            <input
-                              type="date"
-                              className="date-input"
-                              value={spotLateFeeDate}
-                              onChange={(e) => setSpotLateFeeDate(e.target.value)}
+                    {spotDiscountsOpen && (
+                      <div className="discounts-content">
+                        <p className="discounts-desc">Dates set here. Prices set on each item.</p>
+                        <PricingCard>
+                          <div className="pricing-toggle-row">
+                            <IconCircle icon={<ClockIcon />} />
+                            <div className="pricing-toggle-info">
+                              <span className="pricing-toggle-title">Early Bird Discount</span>
+                            </div>
+                            <SmallCheckbox
+                              checked={spotEarlyBirdEnabled}
+                              onChange={(e) => setSpotEarlyBirdEnabled(e.target.checked)}
                             />
-                          </PricingRow>
-                        </div>
-                      )}
-                    </PricingCard>
+                          </div>
 
-                    {navigateToItems && (
-                      <button className="cross-level-link" onClick={navigateToItems}>
-                        Set item prices &rarr;
-                      </button>
+                          {spotEarlyBirdEnabled && (
+                            <div className="inline-pricing-detail">
+                              <PricingRow icon={<CalendarIcon />} borderBottom={false}>
+                                <span className="pricing-label">Discount ends</span>
+                                <input
+                                  type="date"
+                                  className="date-input"
+                                  value={spotEarlyBirdDate}
+                                  onChange={(e) => setSpotEarlyBirdDate(e.target.value)}
+                                />
+                              </PricingRow>
+                            </div>
+                          )}
+
+                          <div className={`pricing-toggle-row ${spotLateFeeEnabled ? '' : 'no-border'}`}>
+                            <IconCircle icon={<HourglassIcon />} />
+                            <div className="pricing-toggle-info">
+                              <span className="pricing-toggle-title">Late Fee</span>
+                            </div>
+                            <SmallCheckbox
+                              checked={spotLateFeeEnabled}
+                              onChange={(e) => setSpotLateFeeEnabled(e.target.checked)}
+                            />
+                          </div>
+
+                          {spotLateFeeEnabled && (
+                            <div className="inline-pricing-detail">
+                              <PricingRow icon={<CalendarIcon />} borderBottom={false}>
+                                <span className="pricing-label">Late fee starts</span>
+                                <input
+                                  type="date"
+                                  className="date-input"
+                                  value={spotLateFeeDate}
+                                  onChange={(e) => setSpotLateFeeDate(e.target.value)}
+                                />
+                              </PricingRow>
+                            </div>
+                          )}
+                        </PricingCard>
+                      </div>
                     )}
                   </div>
+
+                  {navigateToItems && (
+                    <button className="cross-level-link" onClick={navigateToItems}>
+                      Set item prices &rarr;
+                    </button>
+                  )}
                 </div>
               )}
             </div>
@@ -305,152 +314,164 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
           {/* Signup Level Pricing — only when per-household is selected */}
           {chargeMode === 'per-household' && (
             <div className="signup-level-pricing">
-              {/* Three-way pricing mode toggle */}
-              <div className="household-mode-toggle">
-                <button
-                  className={`household-mode-btn ${pricingMode === 'per-spot' ? 'active' : ''}`}
-                  onClick={() => setPricingMode('per-spot')}
-                  type="button"
-                >
-                  Per Spot
-                </button>
-                <button
-                  className={`household-mode-btn ${pricingMode === 'per-household' ? 'active' : ''}`}
-                  onClick={() => setPricingMode('per-household')}
-                  type="button"
-                >
-                  Per Household
-                </button>
-                <button
-                  className={`household-mode-btn ${pricingMode === 'tiered' ? 'active' : ''}`}
-                  onClick={() => setPricingMode('tiered')}
-                  type="button"
-                >
-                  Tiered
-                </button>
-              </div>
-
-              {pricingMode === 'tiered' ? (
-                <MockTierPriceEditor
-                  tierData={householdTierData}
-                  setTierData={setHouseholdTierData}
-                  entity="spot"
-                />
-              ) : (
-              <>
-              {/* Main price card */}
-              <PricingCard>
-                <div className="pricing-row no-border">
-                  <IconCircle icon={<DollarIcon />} />
-                  <div className="pricing-row-content">
-                    <span className="pricing-label">Price per {pricingLabel}</span>
-                    <PriceInput value={price} onChange={setPrice} />
-                  </div>
+              {/* Self-contained pricing card with toggle at top */}
+              <div className="pricing-container">
+                <div className="household-mode-toggle">
+                  <button
+                    className={`household-mode-btn ${pricingMode === 'per-spot' ? 'active' : ''}`}
+                    onClick={() => setPricingMode('per-spot')}
+                    type="button"
+                  >
+                    Per Spot
+                  </button>
+                  <button
+                    className={`household-mode-btn ${pricingMode === 'per-household' ? 'active' : ''}`}
+                    onClick={() => setPricingMode('per-household')}
+                    type="button"
+                  >
+                    Per Household
+                  </button>
+                  <button
+                    className={`household-mode-btn ${pricingMode === 'tiered' ? 'active' : ''}`}
+                    onClick={() => setPricingMode('tiered')}
+                    type="button"
+                  >
+                    Tiered
+                  </button>
                 </div>
 
-                {pricingMode === 'per-spot' && (
-                  <div className="pricing-row no-border max-price-row">
-                    <IconCircle icon={<FamilyIcon />} />
-                    <div className="pricing-row-content">
-                      <div className="max-price-header">
-                        <span className="pricing-label">
-                          Max per household across all items?
-                          <InfoTooltip text="Caps what a household pays in total across every item in this signup. Does not include per-item fees." />
-                        </span>
-                        <SmallCheckbox
-                          checked={maxPriceEnabled}
-                          onChange={(e) => {
-                            setMaxPriceEnabled(e.target.checked)
-                            if (e.target.checked) setTimeout(() => householdMaxPriceRef.current?.focus(), 0)
-                          }}
-                        />
+                {pricingMode === 'tiered' ? (
+                  <div className="pricing-container-body">
+                    <MockTierPriceEditor
+                      tierData={householdTierData}
+                      setTierData={setHouseholdTierData}
+                      entity="spot"
+                    />
+                  </div>
+                ) : (
+                  <div className="pricing-container-body">
+                    <div className="pricing-row no-border">
+                      <IconCircle icon={<DollarIcon />} />
+                      <div className="pricing-row-content">
+                        <span className="pricing-label">Price per {pricingLabel}</span>
+                        <PriceInput value={price} onChange={setPrice} />
                       </div>
-                      {maxPriceEnabled && (
-                        <PriceInput ref={householdMaxPriceRef} value={maxPrice} onChange={setMaxPrice} />
-                      )}
                     </div>
+
+                    {pricingMode === 'per-spot' && (
+                      <div className="pricing-row no-border max-price-row">
+                        <IconCircle icon={<FamilyIcon />} />
+                        <div className="pricing-row-content">
+                          <div className="max-price-header">
+                            <span className="pricing-label">
+                              Max per household across all items?
+                              <InfoTooltip text="Caps what a household pays in total across every item in this signup. Does not include per-item fees." />
+                            </span>
+                            <SmallCheckbox
+                              checked={maxPriceEnabled}
+                              onChange={(e) => {
+                                setMaxPriceEnabled(e.target.checked)
+                                if (e.target.checked) setTimeout(() => householdMaxPriceRef.current?.focus(), 0)
+                              }}
+                            />
+                          </div>
+                          {maxPriceEnabled && (
+                            <PriceInput ref={householdMaxPriceRef} value={maxPrice} onChange={setMaxPrice} />
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
-              </PricingCard>
-
-              {/* Time-Based Pricing */}
-              <div className="time-based-section">
-                <div className="section-header">
-                  <span className="section-header-text">TIME-BASED PRICING</span>
-                </div>
-                <PricingCard>
-                  <div className="pricing-toggle-row">
-                    <IconCircle icon={<ClockIcon />} />
-                    <div className="pricing-toggle-info">
-                      <span className="pricing-toggle-title">Early Bird</span>
-                    </div>
-                    <SmallCheckbox
-                      checked={earlyBirdEnabled}
-                      onChange={(e) => setEarlyBirdEnabled(e.target.checked)}
-                    />
-                  </div>
-
-                  {earlyBirdEnabled && (
-                    <div className="inline-pricing-detail">
-                      <PricingRow icon={<CalendarIcon />}>
-                        <span className="pricing-label">Discount ends</span>
-                        <input
-                          type="date"
-                          className="date-input"
-                          value={earlyBirdDate}
-                          onChange={(e) => setEarlyBirdDate(e.target.value)}
-                        />
-                      </PricingRow>
-                      <PricingRow icon={<DollarIcon />} borderBottom={pricingMode === 'per-spot' && maxPriceEnabled}>
-                        <span className="pricing-label">Price per {pricingLabel}</span>
-                        <PriceInput value={earlyBirdPrice} onChange={setEarlyBirdPrice} />
-                      </PricingRow>
-                      {pricingMode === 'per-spot' && maxPriceEnabled && (
-                        <PricingRow icon={<FamilyIcon />} borderBottom={false}>
-                          <span className="pricing-label">Max per household</span>
-                          <PriceInput value={earlyBirdMaxPrice} onChange={setEarlyBirdMaxPrice} />
-                        </PricingRow>
-                      )}
-                    </div>
-                  )}
-
-                  <div className={`pricing-toggle-row ${latePricingEnabled ? '' : 'no-border'}`}>
-                    <IconCircle icon={<HourglassIcon />} />
-                    <div className="pricing-toggle-info">
-                      <span className="pricing-toggle-title">Late Fee</span>
-                    </div>
-                    <SmallCheckbox
-                      checked={latePricingEnabled}
-                      onChange={(e) => setLatePricingEnabled(e.target.checked)}
-                    />
-                  </div>
-
-                  {latePricingEnabled && (
-                    <div className="inline-pricing-detail">
-                      <PricingRow icon={<CalendarIcon />}>
-                        <span className="pricing-label">Late fee starts</span>
-                        <input
-                          type="date"
-                          className="date-input"
-                          value={lateDate}
-                          onChange={(e) => setLateDate(e.target.value)}
-                        />
-                      </PricingRow>
-                      <PricingRow icon={<DollarIcon />} borderBottom={pricingMode === 'per-spot' && maxPriceEnabled}>
-                        <span className="pricing-label">Price per {pricingLabel}</span>
-                        <PriceInput value={latePrice} onChange={setLatePrice} />
-                      </PricingRow>
-                      {pricingMode === 'per-spot' && maxPriceEnabled && (
-                        <PricingRow icon={<FamilyIcon />} borderBottom={false}>
-                          <span className="pricing-label">Max per household</span>
-                          <PriceInput value={lateMaxPrice} onChange={setLateMaxPrice} />
-                        </PricingRow>
-                      )}
-                    </div>
-                  )}
-                </PricingCard>
               </div>
-              </>
+
+              {/* Discounts & Late Fees — collapsible, visually demoted */}
+              {pricingMode !== 'tiered' && (
+                <div className="discounts-section">
+                  <button className="discounts-toggle" onClick={() => setDiscountsOpen(!discountsOpen)} type="button">
+                    <span className="discounts-arrow">{discountsOpen ? '▾' : '▸'}</span>
+                    Discounts & Late Fees
+                    {(earlyBirdEnabled || latePricingEnabled) && (
+                      <span className="discounts-badge">{(earlyBirdEnabled ? 1 : 0) + (latePricingEnabled ? 1 : 0)} active</span>
+                    )}
+                  </button>
+
+                  {discountsOpen && (
+                    <div className="discounts-content">
+                      <PricingCard>
+                        <div className="pricing-toggle-row">
+                          <IconCircle icon={<ClockIcon />} />
+                          <div className="pricing-toggle-info">
+                            <span className="pricing-toggle-title">Early Bird Discount</span>
+                          </div>
+                          <SmallCheckbox
+                            checked={earlyBirdEnabled}
+                            onChange={(e) => setEarlyBirdEnabled(e.target.checked)}
+                          />
+                        </div>
+
+                        {earlyBirdEnabled && (
+                          <div className="inline-pricing-detail">
+                            <PricingRow icon={<CalendarIcon />}>
+                              <span className="pricing-label">Discount ends</span>
+                              <input
+                                type="date"
+                                className="date-input"
+                                value={earlyBirdDate}
+                                onChange={(e) => setEarlyBirdDate(e.target.value)}
+                              />
+                            </PricingRow>
+                            <PricingRow icon={<DollarIcon />} borderBottom={pricingMode === 'per-spot' && maxPriceEnabled}>
+                              <span className="pricing-label">Price per {pricingLabel}</span>
+                              <PriceInput value={earlyBirdPrice} onChange={setEarlyBirdPrice} />
+                            </PricingRow>
+                            {pricingMode === 'per-spot' && maxPriceEnabled && (
+                              <PricingRow icon={<FamilyIcon />} borderBottom={false}>
+                                <span className="pricing-label">Max per household</span>
+                                <PriceInput value={earlyBirdMaxPrice} onChange={setEarlyBirdMaxPrice} />
+                              </PricingRow>
+                            )}
+                          </div>
+                        )}
+
+                        <div className={`pricing-toggle-row ${latePricingEnabled ? '' : 'no-border'}`}>
+                          <IconCircle icon={<HourglassIcon />} />
+                          <div className="pricing-toggle-info">
+                            <span className="pricing-toggle-title">Late Fee</span>
+                          </div>
+                          <SmallCheckbox
+                            checked={latePricingEnabled}
+                            onChange={(e) => setLatePricingEnabled(e.target.checked)}
+                          />
+                        </div>
+
+                        {latePricingEnabled && (
+                          <div className="inline-pricing-detail">
+                            <PricingRow icon={<CalendarIcon />}>
+                              <span className="pricing-label">Late fee starts</span>
+                              <input
+                                type="date"
+                                className="date-input"
+                                value={lateDate}
+                                onChange={(e) => setLateDate(e.target.value)}
+                              />
+                            </PricingRow>
+                            <PricingRow icon={<DollarIcon />} borderBottom={pricingMode === 'per-spot' && maxPriceEnabled}>
+                              <span className="pricing-label">Price per {pricingLabel}</span>
+                              <PriceInput value={latePrice} onChange={setLatePrice} />
+                            </PricingRow>
+                            {pricingMode === 'per-spot' && maxPriceEnabled && (
+                              <PricingRow icon={<FamilyIcon />} borderBottom={false}>
+                                <span className="pricing-label">Max per household</span>
+                                <PriceInput value={lateMaxPrice} onChange={setLateMaxPrice} />
+                              </PricingRow>
+                            )}
+                          </div>
+                        )}
+                      </PricingCard>
+                    </div>
+                  )}
+                </div>
               )}
             </div>
           )}
