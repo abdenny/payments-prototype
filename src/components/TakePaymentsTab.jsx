@@ -131,6 +131,8 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
   const [useTieredPricing, setUseTieredPricing] = useState(false)
   const [discountsOpen, setDiscountsOpen] = useState(false)
   const [spotDiscountsOpen, setSpotDiscountsOpen] = useState(false)
+  const [earlyBirdTierOverrides, setEarlyBirdTierOverrides] = useState({})
+  const [lateTierOverrides, setLateTierOverrides] = useState({})
   const [householdTierData, setHouseholdTierData] = useState([
     { numberOfSlots: null, amount: '5.00', id: 'max' }
   ])
@@ -318,93 +320,153 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
               </div>
 
               {/* Discounts & Late Fees — collapsible, visually demoted */}
-              {pricingMode !== 'tiered' && (
-                <div className="discounts-section">
-                  <button className="discounts-toggle" onClick={() => setDiscountsOpen(!discountsOpen)} type="button">
-                    <span className="discounts-arrow">{discountsOpen ? '▾' : '▸'}</span>
-                    Discounts & Late Fees
-                    {(earlyBirdEnabled || latePricingEnabled) && (
-                      <span className="discounts-badge">{(earlyBirdEnabled ? 1 : 0) + (latePricingEnabled ? 1 : 0)} active</span>
-                    )}
-                  </button>
-
-                  {discountsOpen && (
-                    <div className="discounts-content">
-                      <PricingCard>
-                        <div className="pricing-toggle-row">
-                          <IconCircle icon={<ClockIcon />} />
-                          <div className="pricing-toggle-info">
-                            <span className="pricing-toggle-title">Early Bird Discount</span>
-                          </div>
-                          <SmallCheckbox
-                            checked={earlyBirdEnabled}
-                            onChange={(e) => setEarlyBirdEnabled(e.target.checked)}
-                          />
-                        </div>
-
-                        {earlyBirdEnabled && (
-                          <div className="inline-pricing-detail">
-                            <PricingRow icon={<CalendarIcon />}>
-                              <span className="pricing-label">Discount ends</span>
-                              <input
-                                type="date"
-                                className="date-input"
-                                value={earlyBirdDate}
-                                onChange={(e) => setEarlyBirdDate(e.target.value)}
-                              />
-                            </PricingRow>
-                            <PricingRow icon={<DollarIcon />} borderBottom={pricingMode === 'per-spot' && maxPriceEnabled}>
-                              <span className="pricing-label">Price per {pricingLabel}</span>
-                              <PriceInput value={earlyBirdPrice} onChange={setEarlyBirdPrice} />
-                            </PricingRow>
-                            {pricingMode === 'per-spot' && maxPriceEnabled && (
-                              <PricingRow icon={<FamilyIcon />} borderBottom={false}>
-                                <span className="pricing-label">Max per household</span>
-                                <PriceInput value={earlyBirdMaxPrice} onChange={setEarlyBirdMaxPrice} />
-                              </PricingRow>
-                            )}
-                          </div>
-                        )}
-
-                        <div className={`pricing-toggle-row ${latePricingEnabled ? '' : 'no-border'}`}>
-                          <IconCircle icon={<HourglassIcon />} />
-                          <div className="pricing-toggle-info">
-                            <span className="pricing-toggle-title">Late Fee</span>
-                          </div>
-                          <SmallCheckbox
-                            checked={latePricingEnabled}
-                            onChange={(e) => setLatePricingEnabled(e.target.checked)}
-                          />
-                        </div>
-
-                        {latePricingEnabled && (
-                          <div className="inline-pricing-detail">
-                            <PricingRow icon={<CalendarIcon />}>
-                              <span className="pricing-label">Late fee starts</span>
-                              <input
-                                type="date"
-                                className="date-input"
-                                value={lateDate}
-                                onChange={(e) => setLateDate(e.target.value)}
-                              />
-                            </PricingRow>
-                            <PricingRow icon={<DollarIcon />} borderBottom={pricingMode === 'per-spot' && maxPriceEnabled}>
-                              <span className="pricing-label">Price per {pricingLabel}</span>
-                              <PriceInput value={latePrice} onChange={setLatePrice} />
-                            </PricingRow>
-                            {pricingMode === 'per-spot' && maxPriceEnabled && (
-                              <PricingRow icon={<FamilyIcon />} borderBottom={false}>
-                                <span className="pricing-label">Max per household</span>
-                                <PriceInput value={lateMaxPrice} onChange={setLateMaxPrice} />
-                              </PricingRow>
-                            )}
-                          </div>
-                        )}
-                      </PricingCard>
-                    </div>
+              <div className="discounts-section">
+                <button className="discounts-toggle" onClick={() => setDiscountsOpen(!discountsOpen)} type="button">
+                  <span className="discounts-arrow">{discountsOpen ? '▾' : '▸'}</span>
+                  Discounts & Late Fees
+                  {(earlyBirdEnabled || latePricingEnabled) && (
+                    <span className="discounts-badge">{(earlyBirdEnabled ? 1 : 0) + (latePricingEnabled ? 1 : 0)} active</span>
                   )}
-                </div>
-              )}
+                </button>
+
+                {discountsOpen && (
+                  <div className="discounts-content">
+                    <PricingCard>
+                      <div className="pricing-toggle-row">
+                        <IconCircle icon={<ClockIcon />} />
+                        <div className="pricing-toggle-info">
+                          <span className="pricing-toggle-title">Early Bird Discount</span>
+                        </div>
+                        <SmallCheckbox
+                          checked={earlyBirdEnabled}
+                          onChange={(e) => setEarlyBirdEnabled(e.target.checked)}
+                        />
+                      </div>
+
+                      {earlyBirdEnabled && (
+                        <div className="inline-pricing-detail">
+                          <PricingRow icon={<CalendarIcon />} borderBottom={true}>
+                            <span className="pricing-label">Discount ends</span>
+                            <input
+                              type="date"
+                              className="date-input"
+                              value={earlyBirdDate}
+                              onChange={(e) => setEarlyBirdDate(e.target.value)}
+                            />
+                          </PricingRow>
+                          {pricingMode === 'tiered' ? (
+                            <div className="tier-overrides">
+                              {householdTierData.filter(t => t.numberOfSlots !== null).map(tier => (
+                                <div className="tier-override-row" key={tier.id}>
+                                  <span className="tier-override-label">Up to {tier.numberOfSlots} spots</span>
+                                  <PriceInput
+                                    value={earlyBirdTierOverrides[tier.id] || ''}
+                                    onChange={(val) => setEarlyBirdTierOverrides({ ...earlyBirdTierOverrides, [tier.id]: val })}
+                                    placeholder="0"
+                                  />
+                                </div>
+                              ))}
+                              {(() => {
+                                const maxT = householdTierData.find(t => t.numberOfSlots === null)
+                                const lastSlots = householdTierData.filter(t => t.numberOfSlots !== null).slice(-1)[0]?.numberOfSlots || 0
+                                return maxT ? (
+                                  <div className="tier-override-row">
+                                    <span className="tier-override-label">{Number(lastSlots) + 1}+ spots</span>
+                                    <PriceInput
+                                      value={earlyBirdTierOverrides['max'] || ''}
+                                      onChange={(val) => setEarlyBirdTierOverrides({ ...earlyBirdTierOverrides, max: val })}
+                                      placeholder="0"
+                                    />
+                                  </div>
+                                ) : null
+                              })()}
+                            </div>
+                          ) : (
+                            <>
+                              <PricingRow icon={<DollarIcon />} borderBottom={pricingMode === 'per-spot' && maxPriceEnabled}>
+                                <span className="pricing-label">Price per {pricingLabel}</span>
+                                <PriceInput value={earlyBirdPrice} onChange={setEarlyBirdPrice} />
+                              </PricingRow>
+                              {pricingMode === 'per-spot' && maxPriceEnabled && (
+                                <PricingRow icon={<FamilyIcon />} borderBottom={false}>
+                                  <span className="pricing-label">Max per household</span>
+                                  <PriceInput value={earlyBirdMaxPrice} onChange={setEarlyBirdMaxPrice} />
+                                </PricingRow>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      )}
+
+                      <div className={`pricing-toggle-row ${latePricingEnabled ? '' : 'no-border'}`}>
+                        <IconCircle icon={<HourglassIcon />} />
+                        <div className="pricing-toggle-info">
+                          <span className="pricing-toggle-title">Late Fee</span>
+                        </div>
+                        <SmallCheckbox
+                          checked={latePricingEnabled}
+                          onChange={(e) => setLatePricingEnabled(e.target.checked)}
+                        />
+                      </div>
+
+                      {latePricingEnabled && (
+                        <div className="inline-pricing-detail">
+                          <PricingRow icon={<CalendarIcon />} borderBottom={true}>
+                            <span className="pricing-label">Late fee starts</span>
+                            <input
+                              type="date"
+                              className="date-input"
+                              value={lateDate}
+                              onChange={(e) => setLateDate(e.target.value)}
+                            />
+                          </PricingRow>
+                          {pricingMode === 'tiered' ? (
+                            <div className="tier-overrides">
+                              {householdTierData.filter(t => t.numberOfSlots !== null).map(tier => (
+                                <div className="tier-override-row" key={tier.id}>
+                                  <span className="tier-override-label">Up to {tier.numberOfSlots} spots</span>
+                                  <PriceInput
+                                    value={lateTierOverrides[tier.id] || ''}
+                                    onChange={(val) => setLateTierOverrides({ ...lateTierOverrides, [tier.id]: val })}
+                                    placeholder="0"
+                                  />
+                                </div>
+                              ))}
+                              {(() => {
+                                const maxT = householdTierData.find(t => t.numberOfSlots === null)
+                                const lastSlots = householdTierData.filter(t => t.numberOfSlots !== null).slice(-1)[0]?.numberOfSlots || 0
+                                return maxT ? (
+                                  <div className="tier-override-row">
+                                    <span className="tier-override-label">{Number(lastSlots) + 1}+ spots</span>
+                                    <PriceInput
+                                      value={lateTierOverrides['max'] || ''}
+                                      onChange={(val) => setLateTierOverrides({ ...lateTierOverrides, max: val })}
+                                      placeholder="0"
+                                    />
+                                  </div>
+                                ) : null
+                              })()}
+                            </div>
+                          ) : (
+                            <>
+                              <PricingRow icon={<DollarIcon />} borderBottom={pricingMode === 'per-spot' && maxPriceEnabled}>
+                                <span className="pricing-label">Price per {pricingLabel}</span>
+                                <PriceInput value={latePrice} onChange={setLatePrice} />
+                              </PricingRow>
+                              {pricingMode === 'per-spot' && maxPriceEnabled && (
+                                <PricingRow icon={<FamilyIcon />} borderBottom={false}>
+                                  <span className="pricing-label">Max per household</span>
+                                  <PriceInput value={lateMaxPrice} onChange={setLateMaxPrice} />
+                                </PricingRow>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      )}
+                    </PricingCard>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 

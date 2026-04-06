@@ -219,6 +219,33 @@
   font-style: italic;
 }
 
+/* ── Tier price overrides inside discounts ── */
+.tier-overrides {
+  padding: 8px 0 4px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tier-override-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tier-override-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #556;
+  white-space: nowrap;
+}
+
+.tier-overrides .price-input-wrap {
+  width: 110px;
+  flex-shrink: 0;
+}
+
 .charge-radio {
   appearance: none;
   -webkit-appearance: none;
