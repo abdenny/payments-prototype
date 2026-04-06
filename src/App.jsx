@@ -151,19 +151,19 @@ export default function App() {
 
               {complexity !== 'off' && (
                 <div className="scenario-row">
-                  <span className="scenario-row-label">Charge mode</span>
+                  <span className="scenario-row-label">Pricing scope</span>
                   <div className="scenario-toggle-group">
                     <button
                       className={`scenario-toggle ${chargeType === 'spot' ? 'active' : ''}`}
                       onClick={() => selectChargeType('spot')}
                     >
-                      Per Spot
+                      Each Item
                     </button>
                     <button
                       className={`scenario-toggle ${chargeType === 'household' ? 'active' : ''}`}
                       onClick={() => selectChargeType('household')}
                     >
-                      Per Household
+                      Across Signup
                     </button>
                   </div>
                 </div>

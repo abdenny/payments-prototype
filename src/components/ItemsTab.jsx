@@ -197,7 +197,7 @@ function ItemTakePaymentsSubTab({ chargeMode, signupPricing, spotTimePricing, na
                   <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                 </svg>
                 <span>
-                  Per-household pricing — configured at signup level.{' '}
+                  Pricing for this item is configured on the Take Payments tab.{' '}
                   <button className="inherited-link" onClick={navigateToPayments}>
                     Edit in Take Payments
                   </button>
@@ -205,6 +205,20 @@ function ItemTakePaymentsSubTab({ chargeMode, signupPricing, spotTimePricing, na
               </div>
 
               <div className="item-pricing-widget">
+                {/* Read-only three-way mode indicator */}
+                <div className="household-mode-toggle inherited-toggle" style={{ marginBottom: 12, opacity: 0.7, pointerEvents: 'none' }}>
+                  <span className={`household-mode-btn ${signupPricing.pricingMode === 'per-spot' ? 'active' : ''}`}>Per Spot</span>
+                  <span className={`household-mode-btn ${signupPricing.pricingMode === 'per-household' ? 'active' : ''}`}>Per Household</span>
+                  <span className={`household-mode-btn ${signupPricing.pricingMode === 'tiered' ? 'active' : ''}`}>Tiered</span>
+                </div>
+
+                {signupPricing.pricingMode === 'tiered' ? (
+                  <div className="inherited-card" style={{ padding: '12px 16px', borderRadius: 8, border: '1px solid #e0e4ea', opacity: 0.7 }}>
+                    <span className="inherited-text" style={{ fontSize: 13, color: '#667' }}>
+                      Tiered pricing is configured on the Take Payments tab.
+                    </span>
+                  </div>
+                ) : (
                 <div className="item-pricing-card inherited-card">
                   <div className="item-pricing-main">
                     <span className="icon-circle inherited-icon" style={{ width: 36, height: 36, minWidth: 36 }}>
@@ -214,17 +228,7 @@ function ItemTakePaymentsSubTab({ chargeMode, signupPricing, spotTimePricing, na
                       </svg>
                     </span>
                     <div className="item-pricing-fields">
-                      <div className="item-pricing-header">
-                        <span className="item-pricing-label inherited-text">Price per {inheritedPricingLabel}</span>
-                        <div className="pricing-toggle inherited-toggle">
-                          <span className={`toggle-btn ${signupPricing.pricingMode === 'per-spot' ? 'active' : ''}`}>
-                            Per Spot
-                          </span>
-                          <span className={`toggle-btn ${signupPricing.pricingMode === 'per-household' ? 'active' : ''}`}>
-                            Per Household
-                          </span>
-                        </div>
-                      </div>
+                      <span className="item-pricing-label inherited-text">Price per {inheritedPricingLabel}</span>
                       <div className="price-input-wrap inherited-input">
                         <span className="price-prefix">$</span>
                         <input type="text" className="price-input" value={signupPricing.price} readOnly />
@@ -284,6 +288,7 @@ function ItemTakePaymentsSubTab({ chargeMode, signupPricing, spotTimePricing, na
                     </div>
                   )}
                 </div>
+                )}
               </div>
             </div>
           ) : (
@@ -299,8 +304,8 @@ function ItemTakePaymentsSubTab({ chargeMode, signupPricing, spotTimePricing, na
                 </svg>
                 <span>
                   {hasSpotTimePricing
-                    ? <>Per-spot pricing — dates from signup level. <button className="inherited-link" onClick={navigateToPayments}>Edit dates</button></>
-                    : <>Per-spot pricing — time-based discounts can be enabled at signup level. <button className="inherited-link" onClick={navigateToPayments}>Go to Take Payments</button></>
+                    ? <>Time-based pricing dates are set on the Take Payments tab. <button className="inherited-link" onClick={navigateToPayments}>Edit dates</button></>
+                    : <>Time-based discounts can be enabled on the Take Payments tab. <button className="inherited-link" onClick={navigateToPayments}>Go to Take Payments</button></>
                   }
                 </span>
               </div>

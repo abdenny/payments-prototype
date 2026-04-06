@@ -162,7 +162,7 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
             </select>
           </div>
 
-          {/* Charge mode selection — three radio cards */}
+          {/* Charge mode selection */}
           <div className="charge-options">
             <div className="charge-option-group">
               <label className={`charge-option charge-card ${chargeMode === 'per-spot' ? 'charge-card-selected' : ''}`}>
@@ -175,10 +175,10 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
                 />
                 <div className="charge-option-content">
                   <div className="charge-option-title-row">
-                    <span className="charge-option-title">Per spot</span>
+                    <span className="charge-option-title">Price each item</span>
                   </div>
                   <span className="charge-option-desc">
-                    Same price for each spot someone signs up for.
+                    Configure pricing on each item's Take Payments tab.
                   </span>
                 </div>
               </label>
@@ -280,7 +280,7 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
               )}
             </div>
 
-            {/* Per household */}
+            {/* All items */}
             <div className="charge-option-group">
               <label className={`charge-option charge-card ${chargeMode === 'per-household' ? 'charge-card-selected' : ''}`}>
                 <input
@@ -292,10 +292,10 @@ export default function TakePaymentsTab({ paymentsEnabled, setPaymentsEnabled, c
                 />
                 <div className="charge-option-content">
                   <div className="charge-option-title-row">
-                    <span className="charge-option-title">Per household</span>
+                    <span className="charge-option-title">One price across the signup</span>
                   </div>
                   <span className="charge-option-desc">
-                    One price per household, regardless of how many sign up.
+                    Set pricing here and apply it to every item.
                   </span>
                 </div>
               </label>

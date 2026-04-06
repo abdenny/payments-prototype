@@ -528,8 +528,8 @@ function StepPricing({ isFree, isDonation, onBack }) {
           <label className={`payment-choice ${chargeMode === 'per-spot' ? 'selected' : ''}`}>
             <input type="radio" name="createChargeMode" checked={chargeMode === 'per-spot'} onChange={() => setChargeMode('per-spot')} />
             <div className="payment-choice-content">
-              <span className="payment-choice-title">Per spot</span>
-              <span className="payment-choice-desc">Same price for each spot someone signs up for.</span>
+              <span className="payment-choice-title">Price each item</span>
+              <span className="payment-choice-desc">You'll configure pricing on each item after creation.</span>
             </div>
           </label>
           {chargeMode === 'per-spot' && (
@@ -543,8 +543,8 @@ function StepPricing({ isFree, isDonation, onBack }) {
           <label className={`payment-choice ${chargeMode === 'per-household' ? 'selected' : ''}`}>
             <input type="radio" name="createChargeMode" checked={chargeMode === 'per-household'} onChange={() => setChargeMode('per-household')} />
             <div className="payment-choice-content">
-              <span className="payment-choice-title">Per household</span>
-              <span className="payment-choice-desc">One price per household, regardless of how many sign up.</span>
+              <span className="payment-choice-title">One price across the signup</span>
+              <span className="payment-choice-desc">Set pricing here and apply it to every item.</span>
             </div>
           </label>
           {chargeMode === 'per-household' && (
