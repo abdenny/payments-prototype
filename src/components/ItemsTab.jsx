@@ -289,20 +289,8 @@ function ItemTakePaymentsSubTab({ chargeMode, signupPricing, spotTimePricing, na
           ) : (
             /* ── Editable pricing (per-spot mode) ── */
             <>
-              {useTieredPricing ? (
-                <div style={{ marginBottom: 12 }}>
-                  <MockTierPriceEditor
-                    tierData={itemTierData}
-                    setTierData={setItemTierData}
-                    entity="spot"
-                  />
-                  <button className="inherited-link" onClick={() => setUseTieredPricing(false)} style={{ marginTop: 8, display: 'block' }}>
-                    Switch to standard pricing &rarr;
-                  </button>
-                </div>
-              ) : (
-              <>
               {/* Per-spot info banner */}
+              {pricingMode !== 'tiered' && (
               <div className="spot-info-banner">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="12" cy="12" r="10" />
@@ -316,8 +304,24 @@ function ItemTakePaymentsSubTab({ chargeMode, signupPricing, spotTimePricing, na
                   }
                 </span>
               </div>
+              )}
 
               <div className="item-pricing-widget">
+                {/* Three-way pricing mode toggle */}
+                <div className="household-mode-toggle" style={{ marginBottom: 12 }}>
+                  <button className={`household-mode-btn ${pricingMode === 'per-spot' ? 'active' : ''}`} onClick={() => setPricingMode('per-spot')} type="button">Per Spot</button>
+                  <button className={`household-mode-btn ${pricingMode === 'per-household' ? 'active' : ''}`} onClick={() => setPricingMode('per-household')} type="button">Per Household</button>
+                  <button className={`household-mode-btn ${pricingMode === 'tiered' ? 'active' : ''}`} onClick={() => setPricingMode('tiered')} type="button">Tiered</button>
+                </div>
+
+                {pricingMode === 'tiered' ? (
+                  <MockTierPriceEditor
+                    tierData={itemTierData}
+                    setTierData={setItemTierData}
+                    entity="spot"
+                  />
+                ) : (
+                <>
                 <div className="item-pricing-card">
                   <div className="item-pricing-main">
                     <span className="icon-circle" style={{ width: 36, height: 36, minWidth: 36 }}>
@@ -327,23 +331,7 @@ function ItemTakePaymentsSubTab({ chargeMode, signupPricing, spotTimePricing, na
                       </svg>
                     </span>
                     <div className="item-pricing-fields">
-                      <div className="item-pricing-header">
-                        <span className="item-pricing-label">Price per {pricingMode === 'per-spot' ? 'spot' : 'household'}</span>
-                        <div className="pricing-toggle">
-                          <button
-                            className={`toggle-btn ${pricingMode === 'per-spot' ? 'active' : ''}`}
-                            onClick={() => setPricingMode('per-spot')}
-                          >
-                            Per Spot
-                          </button>
-                          <button
-                            className={`toggle-btn ${pricingMode === 'per-household' ? 'active' : ''}`}
-                            onClick={() => setPricingMode('per-household')}
-                          >
-                            Per Household
-                          </button>
-                        </div>
-                      </div>
+                      <span className="item-pricing-label">Price per {pricingMode === 'per-spot' ? 'spot' : 'household'}</span>
                       <div className="price-input-wrap">
                         <span className="price-prefix">$</span>
                         <input
@@ -407,10 +395,6 @@ function ItemTakePaymentsSubTab({ chargeMode, signupPricing, spotTimePricing, na
                     </div>
                   )}
                 </div>
-
-                <button className="inherited-link" onClick={() => setUseTieredPricing(true)} style={{ marginTop: 4, marginBottom: 8, display: 'block' }}>
-                  Use tiered pricing instead &rarr;
-                </button>
 
                 {/* Time-based pricing inputs (per-spot mode) */}
                 {hasSpotTimePricing && (
@@ -528,10 +512,10 @@ function ItemTakePaymentsSubTab({ chargeMode, signupPricing, spotTimePricing, na
                     </div>
                   </div>
                 )}
-              </div>
               </>
               )}
-</>
+              </div>
+            </>
           )}
 
           {/* Additional Fees — always editable */}
